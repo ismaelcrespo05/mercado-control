@@ -1,0 +1,91 @@
+{
+  "nav": {
+    "inicio": "Home",
+    "config": "Settings",
+    "escanear": "+ Scan",
+    "logout": "Sign out",
+    "perfil": "My account",
+    "danios": "Damages"
+  },
+  "login": {
+    "title": "VenceYa",
+    "subtitle": "Expiration control",
+    "username": "Username",
+    "password": "Password",
+    "submit": "Sign in"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "vencidos": "Expired",
+    "alerta": "Soon to expire",
+    "ok": "Good condition",
+    "secVencidos": "🔴 Expired",
+    "secAlerta": "🟡 Soon to expire",
+    "secOk": "🟢 Good condition",
+    "empty": "No products registered yet.",
+    "scanFirst": "Scan first product",
+    "filtros": "Filters",
+    "aplicar": "Apply",
+    "limpiar": "Clear filters"
+  },
+  "columns": {
+    "producto": "Product",
+    "codigo": "Code",
+    "vence": "Expires",
+    "vencio": "Expired",
+    "dias": "Days remaining",
+    "diasVenc": "Days expired",
+    "cant": "Qty.",
+    "acciones": "Actions"
+  },
+  "buttons": {
+    "venta": "Sale",
+    "editar": "Edit",
+    "eliminar": "Delete",
+    "danio": "Report damage",
+    "guardar": "Save",
+    "cancelar": "Cancel"
+  },
+  "forms": {
+    "nombre": "Product name",
+    "codigo": "Barcode",
+    "fecha": "Expiration date",
+    "fechaDesde": "From",
+    "fechaHasta": "To",
+    "cantidad": "Quantity",
+    "tipoDanio": "Damage type",
+    "motivo": "Reason/Description",
+    "estado": "Status",
+    "search": "Search product..."
+  },
+  "placeholders": {
+    "nombre": "E.g.: Integral Milk 1L",
+    "codigo": "Scan or enter the code",
+    "buscar": "Search by name or code..."
+  },
+  "messages": {
+    "success": "Operation completed",
+    "error": "Operation error",
+    "confirm": "Are you sure?"
+  },
+  "config": {
+    "title": "Settings",
+    "diasAlerta": "Days warning before expiration",
+    "guardar": "Save settings"
+  },
+  "danio": {
+    "title": "Damaged Products",
+    "reportar": "Report damage",
+    "listar": "View damages",
+    "rasgado": "Torn",
+    "roto": "Broken",
+    "echadoPerder": "Spoiled",
+    "mojado": "Wet",
+    "otro": "Other",
+    "reportado": "Reported",
+    "revisado": "Reviewed",
+    "descartado": "Discarded",
+    "reportadoPor": "Reported by",
+    "fechaReporte": "Report date"
+  }
+}

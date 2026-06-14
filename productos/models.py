@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 
 class Configuracion(models.Model):
@@ -53,3 +54,34 @@ class Producto(models.Model):
             return "alerta"
         else:
             return "ok"
+
+
+class ProductoDañado(models.Model):
+    TIPO_DANIO_CHOICES = [
+        ('RASGADO', 'Rasgado'),
+        ('ROTO', 'Roto'),
+        ('ECHADO_PERDER', 'Echado a perder'),
+        ('MOJADO', 'Mojado'),
+        ('OTRO', 'Otro'),
+    ]
+    
+    ESTADO_CHOICES = [
+        ('REPORTADO', 'Reportado'),
+        ('REVISADO', 'Revisado'),
+        ('DESCARTADO', 'Descartado'),
+    ]
+    
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE, verbose_name="Producto")
+    tipo_danio = models.CharField(max_length=20, choices=TIPO_DANIO_CHOICES, verbose_name="Tipo de daño")
+    motivo = models.TextField(verbose_name="Motivo/Descripción", blank=True)
+    fecha_reporte = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de reporte")
+    reportado_por = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, verbose_name="Reportado por")
+    estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='REPORTADO', verbose_name="Estado")
+    
+    class Meta:
+        verbose_name = "Producto Dañado"
+        verbose_name_plural = "Productos Dañados"
+        ordering = ["-fecha_reporte"]
+    
+    def __str__(self):
+        return f"{self.producto.nombre} - {self.tipo_danio} ({self.fecha_reporte.strftime('%d/%m/%Y')})"

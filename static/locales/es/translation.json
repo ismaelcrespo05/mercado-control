@@ -1,0 +1,91 @@
+{
+  "nav": {
+    "inicio": "Inicio",
+    "config": "Configuración",
+    "escanear": "+ Escanear",
+    "logout": "Cerrar sesión",
+    "perfil": "Mi cuenta",
+    "danios": "Daños/Avería"
+  },
+  "login": {
+    "title": "VenceYa",
+    "subtitle": "Control de vencimientos",
+    "username": "Usuario",
+    "password": "Contraseña",
+    "submit": "Iniciar sesión"
+  },
+  "dashboard": {
+    "title": "Panel de control",
+    "vencidos": "Vencidos",
+    "alerta": "Por vencer",
+    "ok": "En buen estado",
+    "secVencidos": "🔴 Vencidos",
+    "secAlerta": "🟡 Por vencer pronto",
+    "secOk": "🟢 En buen estado",
+    "empty": "No hay productos registrados aún.",
+    "scanFirst": "Escanear primer producto",
+    "filtros": "Filtros",
+    "aplicar": "Aplicar",
+    "limpiar": "Limpiar filtros"
+  },
+  "columns": {
+    "producto": "Producto",
+    "codigo": "Código",
+    "vence": "Vence",
+    "vencio": "Venció",
+    "dias": "Días restantes",
+    "diasVenc": "Días vencido",
+    "cant": "Cant.",
+    "acciones": "Acciones"
+  },
+  "buttons": {
+    "venta": "Venta",
+    "editar": "Editar",
+    "eliminar": "Eliminar",
+    "danio": "Reportar daño",
+    "guardar": "Guardar",
+    "cancelar": "Cancelar"
+  },
+  "forms": {
+    "nombre": "Nombre del producto",
+    "codigo": "Código de barra",
+    "fecha": "Fecha de vencimiento",
+    "fechaDesde": "Desde",
+    "fechaHasta": "Hasta",
+    "cantidad": "Cantidad",
+    "tipoDanio": "Tipo de daño",
+    "motivo": "Motivo/Descripción",
+    "estado": "Estado",
+    "search": "Buscar producto..."
+  },
+  "placeholders": {
+    "nombre": "Ej: Leche Integral 1L",
+    "codigo": "Escanea o escribe el código",
+    "buscar": "Buscar por nombre o código..."
+  },
+  "messages": {
+    "success": "Operación completada",
+    "error": "Error en la operación",
+    "confirm": "¿Estás seguro?"
+  },
+  "config": {
+    "title": "Configuración",
+    "diasAlerta": "Días de alerta antes de vencer",
+    "guardar": "Guardar configuración"
+  },
+  "danio": {
+    "title": "Productos Dañados",
+    "reportar": "Reportar daño",
+    "listar": "Ver daños",
+    "rasgado": "Rasgado",
+    "roto": "Roto",
+    "echadoPerder": "Echado a perder",
+    "mojado": "Mojado",
+    "otro": "Otro",
+    "reportado": "Reportado",
+    "revisado": "Revisado",
+    "descartado": "Descartado",
+    "reportadoPor": "Reportado por",
+    "fechaReporte": "Fecha de reporte"
+  }
+}

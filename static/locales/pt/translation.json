@@ -1,0 +1,91 @@
+{
+  "nav": {
+    "inicio": "Início",
+    "config": "Configuração",
+    "escanear": "+ Escanear",
+    "logout": "Sair",
+    "perfil": "Minha conta",
+    "danios": "Danos/Avaria"
+  },
+  "login": {
+    "title": "VenceYa",
+    "subtitle": "Controle de vencimentos",
+    "username": "Usuário",
+    "password": "Senha",
+    "submit": "Entrar"
+  },
+  "dashboard": {
+    "title": "Painel de controle",
+    "vencidos": "Vencidos",
+    "alerta": "A vencer",
+    "ok": "Em bom estado",
+    "secVencidos": "🔴 Vencidos",
+    "secAlerta": "🟡 A vencer em breve",
+    "secOk": "🟢 Em bom estado",
+    "empty": "Nenhum produto registrado ainda.",
+    "scanFirst": "Escanear primeiro produto",
+    "filtros": "Filtros",
+    "aplicar": "Aplicar",
+    "limpiar": "Limpar filtros"
+  },
+  "columns": {
+    "produto": "Produto",
+    "codigo": "Código",
+    "vence": "Vence",
+    "vencio": "Venceu",
+    "dias": "Dias restantes",
+    "diasVenc": "Dias vencido",
+    "cant": "Qtd.",
+    "acciones": "Ações"
+  },
+  "buttons": {
+    "venta": "Venda",
+    "editar": "Editar",
+    "eliminar": "Excluir",
+    "danio": "Reportar dano",
+    "guardar": "Salvar",
+    "cancelar": "Cancelar"
+  },
+  "forms": {
+    "nombre": "Nome do produto",
+    "codigo": "Código de barras",
+    "fecha": "Data de vencimento",
+    "fechaDesde": "De",
+    "fechaHasta": "Até",
+    "cantidad": "Quantidade",
+    "tipoDanio": "Tipo de dano",
+    "motivo": "Motivo/Descrição",
+    "estado": "Estado",
+    "search": "Procurar produto..."
+  },
+  "placeholders": {
+    "nombre": "Ex: Leite Integral 1L",
+    "codigo": "Escaneie ou digite o código",
+    "buscar": "Procurar por nome ou código..."
+  },
+  "messages": {
+    "success": "Operação concluída",
+    "error": "Erro na operação",
+    "confirm": "Tem certeza?"
+  },
+  "config": {
+    "title": "Configuração",
+    "diasAlerta": "Dias de alerta antes de vencer",
+    "guardar": "Salvar configuração"
+  },
+  "danio": {
+    "title": "Produtos Danificados",
+    "reportar": "Reportar dano",
+    "listar": "Ver danos",
+    "rasgado": "Rasgado",
+    "roto": "Quebrado",
+    "echadoPerder": "Estragado",
+    "mojado": "Molhado",
+    "otro": "Outro",
+    "reportado": "Reportado",
+    "revisado": "Revisado",
+    "descartado": "Descartado",
+    "reportadoPor": "Reportado por",
+    "fechaReporte": "Data do relato"
+  }
+}

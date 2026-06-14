@@ -1,0 +1,105 @@
+{% extends "productos/base.html" %}
+
+{% block title %}Editar producto — VenceYa{% endblock %}
+
+{% block content %}
+<h1 data-i18n="buttons.editar">Editar producto</h1>
+
+<div class="card" style="max-width: 560px; width: 100%;">
+  <form method="post">
+    {% csrf_token %}
+
+    <div class="form-group">
+      <label for="codigo_barra" data-i18n="forms.codigo">Código de barra</label>
+      <input
+        type="text"
+        id="codigo_barra"
+        name="codigo_barra"
+        value="{{ producto.codigo_barra }}"
+        placeholder="Ej: 7501001216609"
+        required
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="nombre" data-i18n="forms.nombre">Nombre del producto</label>
+      <input
+        type="text"
+        id="nombre"
+        name="nombre"
+        value="{{ producto.nombre }}"
+        placeholder="Ej: Leche Integral 1L"
+        required
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="fecha_vencimiento" data-i18n="forms.fecha">Fecha de vencimiento</label>
+      <input
+        type="date"
+        id="fecha_vencimiento"
+        name="fecha_vencimiento"
+        value="{{ producto.fecha_vencimiento|date:'Y-m-d' }}"
+        required
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="cantidad" data-i18n="forms.cantidad">Cantidad de unidades</label>
+      <input
+        type="number"
+        id="cantidad"
+        name="cantidad"
+        value="{{ producto.cantidad }}"
+        min="1"
+        required
+      >
+    </div>
+
+    <div class="form-actions" style="margin-top:1.5rem;">
+      <button type="submit" class="btn btn-primary" data-i18n="buttons.guardar">Guardar cambios</button>
+      <a href="{% url 'dashboard' %}" class="btn btn-ghost" data-i18n="buttons.cancelar">Cancelar</a>
+    </div>
+  </form>
+</div>
+
+<style>
+.card {
+  width: min(100%, 560px);
+  margin: 0 auto;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+form {
+  display: grid;
+  gap: 1rem;
+}
+
+.form-group {
+  display: grid;
+  gap: 0.5rem;
+}
+
+form input,
+form select,
+form button {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 640px) {
+  .form-actions {
+    flex-direction: column;
+  }
+
+  form {
+    gap: 0.85rem;
+  }
+
+  .btn {
+    font-size: 1rem;
+  }
+}
+</style>
+{% endblock %}
