@@ -1,0 +1,97 @@
+{% extends "productos/base.html" %}
+
+{% block title %}Escanear producto — VenceYa{% endblock %}
+
+{% block content %}
+<h1>Registrar producto</h1>
+
+<div class="card" style="max-width: 520px;">
+  <form method="post" id="scan-form">
+    {% csrf_token %}
+
+    <div class="form-group">
+      <label for="codigo_barra">Código de barra</label>
+      <input
+        type="text"
+        id="codigo_barra"
+        name="codigo_barra"
+        placeholder="Escanea o escribe el código"
+        autofocus
+        autocomplete="off"
+        required
+      >
+      <p id="codigo-hint" style="font-size:0.8rem; color:var(--text-muted); margin-top:0.3rem;">
+        El nombre se autocompleta si el código ya fue registrado antes.
+      </p>
+    </div>
+
+    <div class="form-group">
+      <label for="nombre">Nombre del producto</label>
+      <input
+        type="text"
+        id="nombre"
+        name="nombre"
+        placeholder="Ej: Leche La Serenísima 1L"
+        required
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="fecha_vencimiento">Fecha de vencimiento</label>
+      <input
+        type="date"
+        id="fecha_vencimiento"
+        name="fecha_vencimiento"
+        required
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="cantidad">Cantidad de unidades con esta fecha</label>
+      <input
+        type="number"
+        id="cantidad"
+        name="cantidad"
+        value="1"
+        min="1"
+        required
+      >
+    </div>
+
+    <div style="display:flex; gap:0.75rem; margin-top:1.5rem;">
+      <button type="submit" class="btn btn-primary">Guardar producto</button>
+      <a href="{% url 'dashboard' %}" class="btn btn-ghost">Cancelar</a>
+    </div>
+  </form>
+</div>
+
+<script>
+  const codigoInput = document.getElementById("codigo_barra");
+  const nombreInput = document.getElementById("nombre");
+  let debounce;
+
+  codigoInput.addEventListener("input", () => {
+    clearTimeout(debounce);
+    const codigo = codigoInput.value.trim();
+    if (!codigo) return;
+
+    debounce = setTimeout(async () => {
+      const res = await fetch(`{% url 'buscar_codigo' %}?codigo=${encodeURIComponent(codigo)}`);
+      const data = await res.json();
+      if (data.found && !nombreInput.value) {
+        nombreInput.value = data.nombre;
+        nombreInput.style.borderColor = "var(--accent)";
+        setTimeout(() => nombreInput.style.borderColor = "", 1500);
+      }
+    }, 400);
+  });
+
+  // Soporte para lectores de código de barra (simulan "enter" al terminar)
+  codigoInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      nombreInput.focus();
+    }
+  });
+</script>
+{% endblock %}

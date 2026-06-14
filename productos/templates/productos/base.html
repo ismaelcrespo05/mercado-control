@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Control de Vencimientos{% endblock %}</title>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface2: #22263a;
+      --border: #2e3347;
+      --accent: #00e5a0;
+      --accent-dim: #00b87c;
+      --danger: #ff4d6d;
+      --warn: #ffb830;
+      --ok: #00e5a0;
+      --text: #e8eaf0;
+      --text-muted: #7a8099;
+      --radius: 12px;
+      --font: 'Segoe UI', system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* NAV */
+    nav {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      height: 60px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-brand {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+    }
+
+    .nav-brand span { font-size: 1.3rem; }
+
+    nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      padding: 0.4rem 0.75rem;
+      border-radius: 8px;
+      transition: all 0.15s;
+    }
+
+    nav a:hover { color: var(--text); background: var(--surface2); }
+    nav a.active { color: var(--accent); }
+
+    .nav-scan {
+      margin-left: auto;
+      background: var(--accent);
+      color: #000 !important;
+      font-weight: 700 !important;
+      padding: 0.45rem 1.1rem !important;
+    }
+
+    .nav-scan:hover { background: var(--accent-dim) !important; color: #000 !important; }
+
+    /* MAIN */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 1.5rem;
+    }
+
+    h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 1rem;
+    }
+
+    /* MESSAGES */
+    .messages {
+      list-style: none;
+      margin-bottom: 1.5rem;
+    }
+
+    .messages li {
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius);
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+      border-left: 3px solid var(--accent);
+      background: color-mix(in srgb, var(--accent) 8%, var(--surface));
+      color: var(--text);
+    }
+
+    /* CARDS */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+    }
+
+    /* STATS ROW */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      text-align: center;
+    }
+
+    .stat-card .num {
+      font-size: 2.5rem;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-card .label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .stat-card.danger { border-color: var(--danger); }
+    .stat-card.danger .num { color: var(--danger); }
+    .stat-card.warn { border-color: var(--warn); }
+    .stat-card.warn .num { color: var(--warn); }
+    .stat-card.ok { border-color: var(--ok); }
+    .stat-card.ok .num { color: var(--ok); }
+
+    /* TABLE */
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      margin-bottom: 2rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--surface);
+      font-size: 0.9rem;
+    }
+
+    thead th {
+      text-align: left;
+      padding: 0.75rem 1rem;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+    }
+
+    tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: var(--surface2); }
+
+    td {
+      padding: 0.85rem 1rem;
+      vertical-align: middle;
+    }
+
+    /* BADGES */
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .badge-danger { background: color-mix(in srgb, var(--danger) 15%, transparent); color: var(--danger); }
+    .badge-warn   { background: color-mix(in srgb, var(--warn) 15%, transparent);   color: var(--warn); }
+    .badge-ok     { background: color-mix(in srgb, var(--ok) 12%, transparent);     color: var(--ok); }
+
+    /* BUTTONS */
+    .btn {
+      display: inline-block;
+      padding: 0.45rem 1rem;
+      border-radius: 8px;
+      border: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.15s;
+      font-family: var(--font);
+    }
+
+    .btn-primary { background: var(--accent); color: #000; }
+    .btn-primary:hover { background: var(--accent-dim); }
+    .btn-danger  { background: color-mix(in srgb, var(--danger) 15%, var(--surface2)); color: var(--danger); }
+    .btn-danger:hover { background: var(--danger); color: #fff; }
+    .btn-sm { padding: 0.3rem 0.7rem; font-size: 0.8rem; }
+    .btn-ghost { background: var(--surface2); color: var(--text-muted); border: 1px solid var(--border); }
+    .btn-ghost:hover { color: var(--text); border-color: var(--accent); }
+
+    /* FORM */
+    .form-group { margin-bottom: 1.25rem; }
+
+    label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.4rem;
+    }
+
+    input, select {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      padding: 0.65rem 0.9rem;
+      font-size: 0.95rem;
+      font-family: var(--font);
+      transition: border-color 0.15s;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .section { margin-bottom: 2.5rem; }
+
+    .empty {
+      text-align: center;
+      color: var(--text-muted);
+      padding: 2rem;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 600px) {
+      .stats-row { grid-template-columns: 1fr; }
+      nav { gap: 0.75rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="{% url 'dashboard' %}" class="nav-brand"><span>📦</span> VenceYa</a>
+  <a href="{% url 'dashboard' %}" {% if request.resolver_match.url_name == 'dashboard' %}class="active"{% endif %}>Inicio</a>
+  <a href="{% url 'configuracion' %}" {% if request.resolver_match.url_name == 'configuracion' %}class="active"{% endif %}>Configuración</a>
+  <a href="{% url 'escanear' %}" class="btn nav-scan">+ Escanear</a>
+</nav>
+
+<main>
+  {% if messages %}
+  <ul class="messages">
+    {% for msg in messages %}
+    <li>{{ msg }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+
+  {% block content %}{% endblock %}
+</main>
+
+</body>
+</html>
