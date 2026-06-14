@@ -3,26 +3,50 @@
 {% block title %}Escanear producto — VenceYa{% endblock %}
 
 {% block content %}
-<h1>Registrar producto</h1>
+<h1 data-i18n-custom="scan.title">Registrar producto</h1>
 
-<div class="card" style="max-width: 520px;">
+<div class="card" style="max-width: 560px;">
   <form method="post" id="scan-form">
     {% csrf_token %}
 
     <div class="form-group">
       <label for="codigo_barra">Código de barra</label>
-      <input
-        type="text"
-        id="codigo_barra"
-        name="codigo_barra"
-        placeholder="Escanea o escribe el código"
-        autofocus
-        autocomplete="off"
-        required
-      >
+      <div style="display:flex; gap:0.5rem;">
+        <input
+          type="tel"
+          id="codigo_barra"
+          name="codigo_barra"
+          placeholder="Escanea o escribe el código"
+          autofocus
+          autocomplete="off"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          required
+          style="flex:1"
+        >
+        <button type="button" class="btn btn-ghost" id="btnCamara" onclick="abrirCamara()" title="Usar cámara">📷</button>
+      </div>
+      <p id="codigo-error" style="font-size:0.8rem; color:var(--danger); margin-top:0.3rem; display:none;">
+        ⚠️ El código solo puede contener números.
+      </p>
       <p id="codigo-hint" style="font-size:0.8rem; color:var(--text-muted); margin-top:0.3rem;">
         El nombre se autocompleta si el código ya fue registrado antes.
       </p>
+    </div>
+
+    <!-- ESCÁNER DE CÁMARA -->
+    <div id="scanner-container" style="display:none; margin-bottom:1.25rem;">
+      <div style="position:relative; border-radius:10px; overflow:hidden; background:#000; aspect-ratio:4/3;">
+        <video id="scanner-video" style="width:100%; height:100%; object-fit:cover;" playsinline></video>
+        <canvas id="scanner-canvas" style="display:none;"></canvas>
+        <!-- Línea de escaneo animada -->
+        <div style="position:absolute; top:0; left:0; right:0; bottom:0; pointer-events:none;">
+          <div style="position:absolute; left:10%; right:10%; top:50%; height:2px; background:var(--accent); box-shadow:0 0 8px var(--accent); animation:scan 2s linear infinite;"></div>
+        </div>
+      </div>
+      <button type="button" class="btn btn-ghost btn-sm" onclick="cerrarCamara()" style="margin-top:0.5rem; width:100%;">
+        ✕ Cerrar cámara
+      </button>
     </div>
 
     <div class="form-group">
@@ -31,7 +55,7 @@
         type="text"
         id="nombre"
         name="nombre"
-        placeholder="Ej: Leche La Serenísima 1L"
+        placeholder="Ej: Leche Integral 1L"
         required
       >
     </div>
@@ -65,18 +89,42 @@
   </form>
 </div>
 
+<style>
+@keyframes scan {
+  0%   { top: 20%; }
+  50%  { top: 80%; }
+  100% { top: 20%; }
+}
+</style>
+
+<!-- Librería de escaneo de código de barras -->
+<script src="https://cdn.jsdelivr.net/npm/quagga@0.12.1/dist/quagga.min.js"></script>
+
 <script>
   const codigoInput = document.getElementById("codigo_barra");
   const nombreInput = document.getElementById("nombre");
+  const errorMsg = document.getElementById("codigo-error");
   let debounce;
+  let scannerActivo = false;
 
+  // ===== VALIDACIÓN SOLO NÚMEROS =====
   codigoInput.addEventListener("input", () => {
+    const valor = codigoInput.value;
+    const soloNumeros = /^[0-9]*$/.test(valor);
+
+    if (!soloNumeros) {
+      codigoInput.value = valor.replace(/[^0-9]/g, "");
+      errorMsg.style.display = "block";
+      setTimeout(() => errorMsg.style.display = "none", 2000);
+      return;
+    }
+
+    errorMsg.style.display = "none";
     clearTimeout(debounce);
-    const codigo = codigoInput.value.trim();
-    if (!codigo) return;
+    if (!valor) return;
 
     debounce = setTimeout(async () => {
-      const res = await fetch(`{% url 'buscar_codigo' %}?codigo=${encodeURIComponent(codigo)}`);
+      const res = await fetch(`/buscar-codigo/?codigo=${encodeURIComponent(valor)}`);
       const data = await res.json();
       if (data.found && !nombreInput.value) {
         nombreInput.value = data.nombre;
@@ -86,12 +134,65 @@
     }, 400);
   });
 
-  // Soporte para lectores de código de barra (simulan "enter" al terminar)
+  // Enter en código va al nombre
   codigoInput.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      nombreInput.focus();
-    }
+    if (e.key === "Enter") { e.preventDefault(); nombreInput.focus(); }
   });
+
+  // ===== ESCÁNER DE CÁMARA =====
+  function abrirCamara() {
+    const container = document.getElementById("scanner-container");
+    container.style.display = "block";
+    scannerActivo = true;
+
+    Quagga.init({
+      inputStream: {
+        name: "Live",
+        type: "LiveStream",
+        target: document.getElementById("scanner-video"),
+        constraints: {
+          facingMode: "environment",  // cámara trasera en móvil
+          width: { ideal: 1280 },
+          height: { ideal: 720 }
+        }
+      },
+      decoder: {
+        readers: [
+          "ean_reader",
+          "ean_8_reader",
+          "code_128_reader",
+          "code_39_reader",
+          "upc_reader",
+          "upc_e_reader"
+        ]
+      },
+      locate: true
+    }, function(err) {
+      if (err) {
+        alert("No se pudo acceder a la cámara. Asegurate de dar permiso.");
+        cerrarCamara();
+        return;
+      }
+      Quagga.start();
+    });
+
+    Quagga.onDetected(function(result) {
+      const codigo = result.codeResult.code;
+      if (/^[0-9]+$/.test(codigo)) {
+        codigoInput.value = codigo;
+        codigoInput.dispatchEvent(new Event("input"));  // dispara autocomplete
+        cerrarCamara();
+        nombreInput.focus();
+      }
+    });
+  }
+
+  function cerrarCamara() {
+    if (scannerActivo) {
+      Quagga.stop();
+      scannerActivo = false;
+    }
+    document.getElementById("scanner-container").style.display = "none";
+  }
 </script>
 {% endblock %}
