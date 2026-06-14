@@ -37,8 +37,7 @@
     <!-- ESCÁNER DE CÁMARA -->
     <div id="scanner-container" style="display:none; margin-bottom:1.25rem;">
       <div style="position:relative; border-radius:10px; overflow:hidden; background:#000; aspect-ratio:4/3;">
-        <video id="scanner-video" style="width:100%; height:100%; object-fit:cover;" playsinline></video>
-        <canvas id="scanner-canvas" style="display:none;"></canvas>
+        <div id="scanner-video" style="width:100%; height:100%;"></div>
         <!-- Línea de escaneo animada -->
         <div style="position:absolute; top:0; left:0; right:0; bottom:0; pointer-events:none;">
           <div style="position:absolute; left:10%; right:10%; top:50%; height:2px; background:var(--accent); box-shadow:0 0 8px var(--accent); animation:scan 2s linear infinite;"></div>
@@ -166,7 +165,8 @@
           "upc_e_reader"
         ]
       },
-      locate: true
+      locate: true,
+      frequency: 10
     }, function(err) {
       if (err) {
         alert("No se pudo acceder a la cámara. Asegurate de dar permiso.");
