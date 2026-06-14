@@ -49,14 +49,15 @@
     nav {
       background: var(--surface);
       border-bottom: 1px solid var(--border);
-      padding: 0 1.5rem;
+      padding: 0.75rem 1rem;
       display: flex;
       align-items: center;
-      gap: 1.5rem;
-      height: 60px;
+      gap: 1rem;
       position: sticky;
       top: 0;
       z-index: 100;
+      flex-wrap: wrap;
+      justify-content: space-between;
     }
 
     .nav-brand {
@@ -88,6 +89,7 @@
       display: flex;
       align-items: center;
       gap: 0.5rem;
+      flex-wrap: wrap;
     }
 
     /* THEME & LANG TOGGLES */
@@ -150,7 +152,9 @@
       background: color-mix(in srgb, var(--accent) 8%, var(--surface)); color: var(--text);
     }
 
-    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1.5rem; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1.5rem; width: 100%; }
+    .form-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1rem; }
+    .grid-2col { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
 
     .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem; }
     .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; text-align: center; }
@@ -192,9 +196,19 @@
 
     .section { margin-bottom: 2.5rem; }
 
-    @media (max-width: 600px) {
+    @media (max-width: 900px) {
+      nav { justify-content: space-between; }
+      .nav-right { width: 100%; justify-content: flex-end; }
+    }
+
+    @media (max-width: 640px) {
       .stats-row { grid-template-columns: 1fr; }
-      nav { gap: 0.5rem; padding: 0 1rem; }
+      nav { gap: 0.75rem; padding: 0.75rem 0.75rem; }
+      .nav-right { justify-content: space-between; }
+      .form-actions { flex-direction: column; }
+      .grid-2col { grid-template-columns: 1fr; }
+      .card { padding: 1rem; }
+      main { padding: 1.25rem 1rem; }
     }
   </style>
 </head>
