@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es" data-theme="dark">
 <head>
@@ -442,7 +443,7 @@
       </button>
       <div class="dropdown-menu" id="userMenu">
         {% if user.is_staff %}
-        <a href="/admin/" style="display: block;">⚙️ Admin Panel</a>
+        <a href="{% url 'admin_panel' %}" style="display: block;">Panel admin</a>
         {% endif %}
         <a href="{% url 'logout' %}" data-i18n="nav.logout">🚪 Logout</a>
       </div>
@@ -458,6 +459,9 @@
     <a href="{% url 'dashboard' %}" data-i18n="nav.inicio">Inicio</a>
     <a href="{% url 'configuracion' %}" data-i18n="nav.config">Configuración</a>
     <a href="{% url 'listar_danios' %}" data-i18n="nav.danios">Daños</a>
+    {% if user.is_staff %}
+    <a href="{% url 'admin_panel' %}">Panel admin</a>
+    {% endif %}
     <hr>
     <a href="{% url 'escanear' %}" class="nav-scan" data-i18n="nav.escanear">+ Escanear</a>
     <hr>
@@ -478,7 +482,7 @@
 </main>
 
 <!-- i18next Config -->
-<script src="/static/js/i18next-config.js"></script>
+<script src="{% static 'js/i18next-config.js' %}"></script>
 
 <script>
 let currentTheme = localStorage.getItem('theme') || 'dark';

@@ -1,0 +1,103 @@
+{% extends "productos/base.html" %}
+
+{% block title %}Panel admin - VenceYa{% endblock %}
+
+{% block content %}
+<div style="display:flex; justify-content:space-between; align-items:center; gap:1rem; margin-bottom:1.5rem; flex-wrap:wrap;">
+  <h1 style="margin-bottom:0;">Panel admin</h1>
+  <a href="{% url 'admin_usuario_nuevo' %}" class="btn btn-primary">Nuevo usuario</a>
+</div>
+
+<div class="admin-stats">
+  <div class="stat-card">
+    <div class="num">{{ total_usuarios }}</div>
+    <div class="label">Usuarios</div>
+  </div>
+  <div class="stat-card ok">
+    <div class="num">{{ usuarios_activos }}</div>
+    <div class="label">Activos</div>
+  </div>
+  <div class="stat-card warn">
+    <div class="num">{{ total_productos }}</div>
+    <div class="label">Productos</div>
+  </div>
+  <div class="stat-card danger">
+    <div class="num">{{ danios_pendientes }}</div>
+    <div class="label">Daños pendientes</div>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Usuarios y roles</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Usuario</th>
+          <th>Nombre</th>
+          <th>Rol</th>
+          <th>Estado</th>
+          <th>Último acceso</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in usuarios_con_roles %}
+        <tr>
+          <td>
+            <strong>{{ item.usuario.username }}</strong>
+            {% if item.usuario.email %}
+            <br><small style="color:var(--text-muted);">{{ item.usuario.email }}</small>
+            {% endif %}
+          </td>
+          <td>{{ item.usuario.get_full_name|default:"-" }}</td>
+          <td>
+            <span class="badge {% if item.rol_codigo == 'admin' %}badge-ok{% elif item.rol_codigo == 'admin_delegado' %}badge-warn{% else %}badge-danger{% endif %}">
+              {{ item.rol_nombre }}
+            </span>
+          </td>
+          <td>
+            {% if item.usuario.is_active %}
+            <span class="badge badge-ok">Activo</span>
+            {% else %}
+            <span class="badge badge-danger">Inactivo</span>
+            {% endif %}
+          </td>
+          <td>{{ item.usuario.last_login|date:"d/m/Y H:i"|default:"-" }}</td>
+          <td>
+            <a href="{% url 'admin_usuario_editar' item.usuario.pk %}" class="btn btn-sm btn-ghost">Editar</a>
+            {% if item.usuario != user %}
+            <form method="post" action="{% url 'admin_usuario_eliminar' item.usuario.pk %}" style="display:inline;" onsubmit="return confirm('¿Eliminar usuario {{ item.usuario.username }}?')">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
+            </form>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<style>
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 900px) {
+  .admin-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-stats {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+{% endblock %}

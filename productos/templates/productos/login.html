@@ -1,9 +1,15 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login — VenceYa</title>
+  
+  <!-- i18next CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/i18next@23.5.0/i18next.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/i18next-http-backend@2.4.2/i18nextHttpBackend.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/i18next-browser-languagedetector@7.2.0/i18nextBrowserLanguageDetector.min.js"></script>
   <style>
     /* ===== DARK THEME (default) ===== */
     [data-theme="dark"] {
@@ -151,7 +157,7 @@
 
     .theme-btn {
       position: fixed;
-      bottom: 20px;
+      top: 20px;
       right: 20px;
       background: var(--surface2);
       border: 1px solid var(--border);
@@ -230,6 +236,9 @@
 </div>
 
 <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="Cambiar tema">🌙</button>
+
+<!-- i18next Config -->
+<script src="{% static 'js/i18next-config.js' %}"></script>
 
 <script>
 let currentTheme = localStorage.getItem('theme') || 'dark';

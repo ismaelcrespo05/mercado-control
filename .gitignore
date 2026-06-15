@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+*.pyc.*
+
+staticfiles/
+
+*.sqlite3-journal
+*.sqlite3-wal
+*.sqlite3-shm
+
+.env

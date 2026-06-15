@@ -43,15 +43,19 @@
       />
     </div>
     <div>
+      <label for="fecha_desde" data-i18n="filters.desde">Desde:</label>
       <input
         type="date"
+        id="fecha_desde"
         name="fecha_desde"
         value="{{ fecha_desde }}"
       />
     </div>
     <div>
+      <label for="fecha_hasta" data-i18n="filters.hasta">Hasta:</label>
       <input
         type="date"
+        id="fecha_hasta"
         name="fecha_hasta"
         value="{{ fecha_hasta }}"
       />
@@ -89,7 +93,7 @@
           <td>{{ p.cantidad }}</td>
           <td>
             <a href="{% url 'vender' p.pk %}" class="btn btn-sm btn-ghost" data-i18n="buttons.venta">Venta</a>
-            {% if perms.can_edit or user.is_staff or user.groups.all|length > 0 %}
+            {% if can_edit %}
             <a href="{% url 'editar' p.pk %}" class="btn btn-sm btn-ghost" data-i18n="buttons.editar">Editar</a>
             {% endif %}
             <a href="{% url 'reportar_danio' p.pk %}" class="btn btn-sm btn-ghost" data-i18n="buttons.danio">Daño</a>
@@ -134,7 +138,7 @@
           <td>{{ p.cantidad }}</td>
           <td>
             <a href="{% url 'vender' p.pk %}" class="btn btn-sm btn-ghost" data-i18n="buttons.venta">Venta</a>
-            {% if perms.can_edit or user.is_staff or user.groups.all|length > 0 %}
+            {% if can_edit %}
             <a href="{% url 'editar' p.pk %}" class="btn btn-sm btn-ghost" data-i18n="buttons.editar">Editar</a>
             {% endif %}
             <a href="{% url 'reportar_danio' p.pk %}" class="btn btn-sm btn-ghost" data-i18n="buttons.danio">Daño</a>
@@ -179,7 +183,7 @@
           <td>{{ p.cantidad }}</td>
           <td>
             <a href="{% url 'vender' p.pk %}" class="btn btn-sm btn-ghost" data-i18n="buttons.venta">Venta</a>
-            {% if perms.can_edit or user.is_staff or user.groups.all|length > 0 %}
+            {% if can_edit %}
             <a href="{% url 'editar' p.pk %}" class="btn btn-sm btn-ghost" data-i18n="buttons.editar">Editar</a>
             {% endif %}
             <a href="{% url 'reportar_danio' p.pk %}" class="btn btn-sm btn-ghost" data-i18n="buttons.danio">Daño</a>
