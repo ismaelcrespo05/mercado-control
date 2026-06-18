@@ -35,11 +35,18 @@
 
     <!-- ESCÁNER DE CÁMARA -->
     <div id="scanner-container" style="display:none; margin-bottom:1.25rem;">
-      <div style="position:relative; border-radius:10px; overflow:hidden; background:#000; aspect-ratio:4/3;">
-        <video id="scanner-video" style="width:100%; height:100%; object-fit:cover;" playsinline></video>
-        <div style="position:absolute; top:0; left:0; right:0; bottom:0; pointer-events:none;">
-          <div style="position:absolute; left:10%; right:10%; top:50%; height:2px; background:var(--accent); box-shadow:0 0 8px var(--accent); animation:scan 2s linear infinite;"></div>
+      <div style="position:relative; border-radius:10px; overflow:hidden; background:#000; aspect-ratio:4/3; max-height:300px;">
+        <video id="scanner-video" style="width:100%; height:100%; object-fit:cover;" playsinline muted></video>
+        <!-- línea de escaneo animada -->
+        <div style="position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;">
+          <div id="scan-line" style="position:absolute;left:10%;right:10%;top:30%;height:2px;background:var(--accent);box-shadow:0 0 8px var(--accent);animation:scan 2s linear infinite;"></div>
+          <!-- esquinas del visor -->
+          <div style="position:absolute;top:15%;left:10%;width:20px;height:20px;border-top:3px solid var(--accent);border-left:3px solid var(--accent);border-radius:2px 0 0 0;"></div>
+          <div style="position:absolute;top:15%;right:10%;width:20px;height:20px;border-top:3px solid var(--accent);border-right:3px solid var(--accent);border-radius:0 2px 0 0;"></div>
+          <div style="position:absolute;bottom:15%;left:10%;width:20px;height:20px;border-bottom:3px solid var(--accent);border-left:3px solid var(--accent);border-radius:0 0 0 2px;"></div>
+          <div style="position:absolute;bottom:15%;right:10%;width:20px;height:20px;border-bottom:3px solid var(--accent);border-right:3px solid var(--accent);border-radius:0 0 2px 0;"></div>
         </div>
+        <p style="position:absolute;bottom:8px;left:0;right:0;text-align:center;color:#fff;font-size:0.75rem;text-shadow:0 1px 3px #000;" id="scan-status">Apuntá al código de barras</p>
       </div>
       <button type="button" class="btn btn-ghost btn-sm" onclick="cerrarCamara()" style="margin-top:0.5rem; width:100%;">
         ✕ Cerrar cámara
@@ -60,9 +67,9 @@
       </div>
     </div>
 
-    <!-- AVISO: producto nuevo, no encontrado en ningún lado -->
+    <!-- AVISO: producto nuevo -->
     <div id="producto-nuevo-aviso" style="display:none; margin-bottom:1.25rem; padding:0.85rem 1rem; background:color-mix(in srgb, var(--warn) 10%, var(--surface2)); border-radius:10px; border:1px solid var(--warn); font-size:0.85rem; color:var(--warn);">
-      ℹ️ Producto nuevo — no lo encontramos en ningún catálogo. Completá el nombre y, si querés, una foto. Quedará guardado para la próxima vez.
+      ℹ️ Producto nuevo — completá el nombre y opcionalmente una foto. Quedará guardado para la próxima vez.
     </div>
 
     <div class="form-group">
@@ -70,13 +77,10 @@
       <input type="text" id="nombre" name="nombre" placeholder="Ej: Leche Integral 1L" required>
     </div>
 
-    <!-- Subir foto manual: solo visible cuando el producto es nuevo -->
     <div class="form-group" id="campo-foto-manual" style="display:none;">
       <label for="foto_manual">Foto del producto (opcional)</label>
       <input type="file" id="foto_manual" name="foto_manual" accept="image/*" capture="environment">
-      <p style="font-size:0.8rem; color:var(--text-muted); margin-top:0.3rem;">
-        Podés tomar una foto con la cámara del celular.
-      </p>
+      <p style="font-size:0.8rem; color:var(--text-muted); margin-top:0.3rem;">Podés tomar una foto con la cámara del celular.</p>
     </div>
 
     <div class="form-group">
@@ -97,28 +101,31 @@
 </div>
 
 <style>
-@keyframes scan { 0% { top:20%; } 50% { top:80%; } 100% { top:20%; } }
+@keyframes scan { 0% { top:20%; } 50% { top:75%; } 100% { top:20%; } }
 </style>
 
-<script src="https://cdn.jsdelivr.net/npm/quagga@0.12.1/dist/quagga.min.js"></script>
+<!-- ZXing: librería moderna de escaneo, funciona bien en móviles -->
+<script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js"></script>
 
 <script>
-  const codigoInput      = document.getElementById("codigo_barra");
-  const nombreInput      = document.getElementById("nombre");
-  const errorMsg         = document.getElementById("codigo-error");
-  const buscandoMsg      = document.getElementById("buscando-msg");
+  const codigoInput       = document.getElementById("codigo_barra");
+  const nombreInput       = document.getElementById("nombre");
+  const errorMsg          = document.getElementById("codigo-error");
+  const buscandoMsg       = document.getElementById("buscando-msg");
   const productoEncontrado = document.getElementById("producto-encontrado");
   const productoNuevoAviso = document.getElementById("producto-nuevo-aviso");
-  const campoFotoManual  = document.getElementById("campo-foto-manual");
-  const fotoProducto     = document.getElementById("foto-producto");
-  const nombreEncontrado = document.getElementById("nombre-encontrado");
-  const marcaEncontrada  = document.getElementById("marca-encontrada");
-  const origenLabel      = document.getElementById("origen-label");
+  const campoFotoManual   = document.getElementById("campo-foto-manual");
+  const fotoProducto      = document.getElementById("foto-producto");
+  const nombreEncontrado  = document.getElementById("nombre-encontrado");
+  const marcaEncontrada   = document.getElementById("marca-encontrada");
+  const origenLabel       = document.getElementById("origen-label");
+  const scanStatus        = document.getElementById("scan-status");
 
   let debounce;
-  let scannerActivo = false;
   let codigoYaConsultado = "";
+  let lector = null;  // instancia de ZXing
 
+  // ─── ESTADO DEL FORMULARIO ───────────────────────────────
   function resetearEstadoProducto() {
     productoEncontrado.style.display = "none";
     productoNuevoAviso.style.display = "none";
@@ -128,6 +135,7 @@
     nombreInput.readOnly = false;
   }
 
+  // ─── CONSULTA AL SERVIDOR ────────────────────────────────
   async function consultarCodigo(codigo) {
     if (!codigo || codigoYaConsultado === codigo) return;
     codigoYaConsultado = codigo;
@@ -135,15 +143,13 @@
     buscandoMsg.style.display = "block";
 
     try {
-      const res = await fetch(`/consultar-codigo/?codigo=${encodeURIComponent(codigo)}`);
+      const res  = await fetch(`/consultar-codigo/?codigo=${encodeURIComponent(codigo)}`);
       const data = await res.json();
       buscandoMsg.style.display = "none";
 
       if (data.found) {
-        // Producto reconocido: mostramos su ficha y bloqueamos edición del nombre
-        nombreInput.value = data.nombre;
+        nombreInput.value    = data.nombre;
         nombreInput.readOnly = true;
-
         nombreEncontrado.textContent = data.nombre;
         marcaEncontrada.textContent  = data.marca || "";
         origenLabel.textContent = data.origen === "api"
@@ -154,13 +160,11 @@
           fotoProducto.src = data.foto;
           fotoProducto.style.display = "block";
         }
-
         productoEncontrado.style.display = "block";
       } else {
-        // Producto nuevo: pedimos datos manuales
         nombreInput.readOnly = false;
         productoNuevoAviso.style.display = "block";
-        campoFotoManual.style.display = "block";
+        campoFotoManual.style.display    = "block";
         nombreInput.focus();
       }
     } catch (e) {
@@ -168,7 +172,7 @@
     }
   }
 
-  // Validación numérica + disparo de búsqueda
+  // ─── VALIDACIÓN NUMÉRICA ─────────────────────────────────
   codigoInput.addEventListener("input", () => {
     const valor = codigoInput.value;
     if (!/^[0-9]*$/.test(valor)) {
@@ -180,7 +184,6 @@
     errorMsg.style.display = "none";
     resetearEstadoProducto();
     codigoYaConsultado = "";
-
     clearTimeout(debounce);
     if (!valor) return;
     debounce = setTimeout(() => consultarCodigo(valor), 500);
@@ -194,50 +197,57 @@
     }
   });
 
-  // ===== ESCÁNER DE CÁMARA =====
+  // ─── ESCÁNER CON ZXING ───────────────────────────────────
   function abrirCamara() {
-    const container = document.getElementById("scanner-container");
-    container.style.display = "block";
-    scannerActivo = true;
+    document.getElementById("scanner-container").style.display = "block";
+    const video = document.getElementById("scanner-video");
 
-    Quagga.init({
-      inputStream: {
-        name: "Live",
-        type: "LiveStream",
-        target: document.getElementById("scanner-video"),
-        constraints: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } }
-      },
-      decoder: { readers: ["ean_reader", "ean_8_reader", "code_128_reader", "code_39_reader", "upc_reader", "upc_e_reader"] },
-      locate: true
-    }, function(err) {
-      if (err) {
-        alert("No se pudo acceder a la cámara. Asegurate de dar permiso.");
-        cerrarCamara();
-        return;
+    // ZXing lee directamente desde el elemento <video>
+    const hints = new Map();
+    const formatos = [
+      ZXing.BarcodeFormat.EAN_13,
+      ZXing.BarcodeFormat.EAN_8,
+      ZXing.BarcodeFormat.CODE_128,
+      ZXing.BarcodeFormat.CODE_39,
+      ZXing.BarcodeFormat.UPC_A,
+      ZXing.BarcodeFormat.UPC_E,
+    ];
+    hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS, formatos);
+    // TRY_HARDER hace que intente más aunque el código esté algo torcido
+    hints.set(ZXing.DecodeHintType.TRY_HARDER, true);
+
+    lector = new ZXing.BrowserMultiFormatReader(hints);
+
+    lector.decodeFromVideoDevice(
+      null,   // null = usa la cámara trasera por defecto
+      video,
+      (resultado, error) => {
+        if (resultado) {
+          const codigo = resultado.getText();
+          if (/^[0-9]+$/.test(codigo)) {
+            codigoInput.value = codigo;
+            codigoInput.dispatchEvent(new Event("input"));
+            cerrarCamara();
+          } else {
+            scanStatus.textContent = "Código no válido, intentá de nuevo";
+          }
+        }
+        // Los errores de "no encontré nada en este frame" son normales,
+        // ZXing los lanza constantemente mientras escanea — los ignoramos.
       }
-      Quagga.start();
-    });
-
-    // Requerimos 3 lecturas iguales seguidas antes de aceptar el código,
-    // así evitamos que un código mal leído (un solo frame borroso) se cuele.
-    let lecturas = {};
-    Quagga.onDetected(function(result) {
-      const codigo = result.codeResult.code;
-      if (!/^[0-9]+$/.test(codigo)) return;
-
-      lecturas[codigo] = (lecturas[codigo] || 0) + 1;
-
-      if (lecturas[codigo] >= 3) {
-        codigoInput.value = codigo;
-        codigoInput.dispatchEvent(new Event("input"));
-        cerrarCamara();
-      }
+    ).catch(err => {
+      alert("No se pudo acceder a la cámara: " + err.message);
+      cerrarCamara();
     });
   }
 
   function cerrarCamara() {
-    if (scannerActivo) { Quagga.stop(); scannerActivo = false; }
+    if (lector) {
+      lector.reset();
+      lector = null;
+    }
     document.getElementById("scanner-container").style.display = "none";
+    scanStatus.textContent = "Apuntá al código de barras";
   }
 </script>
 {% endblock %}
