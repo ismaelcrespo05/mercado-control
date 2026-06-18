@@ -4,11 +4,15 @@ from django.views.decorators.http import require_POST
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import Group, User
+from django.db.models import Count
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.utils import timezone
 from .models import Producto, Configuracion, ProductoDañado
 import json
-
+from django.utils import timezone
+from datetime import timedelta
+from .models import CatalogoProducto
+from .servicios import buscar_en_openfoodfacts
 
 ROLES_GESTIONABLES = {
     "admin": "Administrador",
@@ -99,6 +103,17 @@ def logout_view(request):
 @user_passes_test(es_admin, login_url='dashboard')
 def admin_panel(request):
     asegurar_grupos()
+    hoy = timezone.now().date()
+    config = Configuracion.get_config()
+    productos = Producto.objects.all()
+
+    vencidos  = sum(1 for p in productos if p.dias_para_vencer < 0)
+    en_alerta = sum(1 for p in productos if 0 <= p.dias_para_vencer <=config.dias_alerta)
+    ok        = sum(1 for p in productos if p.dias_para_vencer > config.dias_alerta)
+
+    danios_recientes = ProductoDañado.objects.select_related('producto', 'reportado_por').order_by('-fecha_reporte')[:10]
+    danios_por_tipo  = ProductoDañado.objects.values('tipo_danio').annotate(total=Count('id')).order_by('-total')
+
     usuarios = User.objects.prefetch_related("groups").order_by("username")
     usuarios_con_roles = [
         {
@@ -115,8 +130,14 @@ def admin_panel(request):
         "usuarios_activos": usuarios.filter(is_active=True).count(),
         "total_productos": Producto.objects.count(),
         "danios_pendientes": ProductoDañado.objects.filter(estado="REPORTADO").count(),
+        "vencidos": vencidos,
+        "en_alerta": en_alerta,
+        "ok": ok,
+        "config": config,
+        "danios_recientes": danios_recientes,
+        "danios_por_tipo": danios_por_tipo,
     })
-
+    
 
 @login_required(login_url='login')
 @user_passes_test(es_admin, login_url='dashboard')
@@ -243,17 +264,22 @@ def dashboard(request):
 @login_required(login_url='login')
 def escanear(request):
     if request.method == "POST":
-        codigo = request.POST.get("codigo_barra", "").strip()
-        nombre = request.POST.get("nombre", "").strip()
+        codigo    = request.POST.get("codigo_barra", "").strip()
+        nombre    = request.POST.get("nombre", "").strip()
         fecha_str = request.POST.get("fecha_vencimiento", "").strip()
-        
+        foto_manual = request.FILES.get("foto_manual")
+
+        if not codigo.isdigit():
+            messages.error(request, "El código de barra solo puede contener números.")
+            return render(request, "productos/escanear.html")
+
         try:
             cantidad = int(request.POST.get("cantidad", 1))
             if cantidad <= 0:
                 messages.error(request, "La cantidad debe ser mayor a 0.")
                 return render(request, "productos/escanear.html")
         except ValueError:
-            messages.error(request, "Cantidad inválida. Debe ser un número entero.")
+            messages.error(request, "Cantidad inválida.")
             return render(request, "productos/escanear.html")
 
         if codigo and nombre and fecha_str:
@@ -261,12 +287,22 @@ def escanear(request):
                 from datetime import date
                 año, mes, dia = fecha_str.split("-")
                 fecha = date(int(año), int(mes), int(dia))
-                
             except (ValueError, IndexError):
-                messages.error(request, "Formato de fecha inválido. Usa YYYY-MM-DD.")
+                messages.error(request, "Formato de fecha inválido.")
                 return render(request, "productos/escanear.html")
 
-            # Si ya existe ese código con esa fecha, suma cantidad
+            # Aseguramos que el catálogo tenga la ficha de este producto.
+            # Si ya existe (vino de la API o de un registro anterior), no la tocamos
+            # salvo que el usuario haya subido una foto manual nueva.
+            ficha, creada = CatalogoProducto.objects.get_or_create(
+                codigo_barra=codigo,
+                defaults={"nombre": nombre, "origen": "manual"},
+            )
+            if foto_manual:
+                ficha.foto_archivo = foto_manual
+                ficha.save()
+
+            # Stock real: igual que antes, suma cantidad si ya existe ese lote
             existente = Producto.objects.filter(
                 codigo_barra=codigo, fecha_vencimiento=fecha
             ).first()
@@ -289,6 +325,7 @@ def escanear(request):
             messages.error(request, "Todos los campos son obligatorios.")
 
     return render(request, "productos/escanear.html")
+
 
 
 @login_required(login_url='login')
@@ -482,3 +519,99 @@ def configuracion(request):
         messages.success(request, f"Alerta configurada a {dias} días.")
         return redirect("dashboard")
     return render(request, "productos/configuracion.html", {"config": config})
+# ─────────────────────────────────────────────────────────────
+
+
+
+# 2) NUEVA VISTA — reemplaza la lógica del paso "escanear código"
+#    Esta vista se llama por AJAX cuando el usuario escribe/escanea el código,
+#    ANTES de mostrar el resto del formulario.
+
+@login_required(login_url='login')
+def consultar_codigo(request):
+    """
+    Paso 1 del flujo de escaneo.
+    Recibe el código de barra y responde con lo que ya sabemos de él:
+
+    1. Si está en nuestro CatalogoProducto -> devuelve nombre y foto guardados.
+    2. Si no está, busca en Open Food Facts -> si lo encuentra, lo GUARDA
+       en el catálogo para la próxima vez, y devuelve nombre y foto.
+    3. Si no está en ningún lado -> devuelve found=False para que el
+       formulario pida nombre y foto manualmente.
+    """
+    codigo = request.GET.get("codigo", "").strip()
+
+    if not codigo or not codigo.isdigit():
+        return JsonResponse({"found": False, "error": "codigo_invalido"})
+
+    # 1. Buscar primero en nuestro propio catálogo (rápido, sin internet)
+    ficha = CatalogoProducto.objects.filter(codigo_barra=codigo).first()
+    if ficha:
+        return JsonResponse({
+            "found": True,
+            "nombre": ficha.nombre,
+            "marca": ficha.marca,
+            "foto": ficha.foto or "",
+            "origen": ficha.origen,
+        })
+
+    # 2. No está en nuestro catálogo: preguntar a Open Food Facts
+    resultado_api = buscar_en_openfoodfacts(codigo)
+
+    if resultado_api:
+        # Lo guardamos para que la próxima vez ya esté en nuestro catálogo
+        ficha = CatalogoProducto.objects.create(
+            codigo_barra=codigo,
+            nombre=resultado_api["nombre"],
+            marca=resultado_api["marca"],
+            foto_url=resultado_api["foto_url"],
+            origen="api",
+        )
+        return JsonResponse({
+            "found": True,
+            "nombre": ficha.nombre,
+            "marca": ficha.marca,
+            "foto": ficha.foto or "",
+            "origen": "api",
+        })
+
+    # 3. No se encontró en ningún lado: el formulario pedirá los datos a mano
+    return JsonResponse({"found": False})
+
+
+@login_required(login_url='login')
+def guardar_ficha_manual(request):
+    """
+    Cuando un código no se encontró ni en el catálogo propio ni en
+    Open Food Facts, el usuario completa nombre y (opcional) foto.
+    Esta vista guarda esa ficha para que el próximo escaneo de ese
+    código ya la reconozca automáticamente.
+    """
+    if request.method != "POST":
+        return JsonResponse({"ok": False}, status=405)
+
+    codigo = request.POST.get("codigo_barra", "").strip()
+    nombre = request.POST.get("nombre", "").strip()
+    foto   = request.FILES.get("foto")  # puede venir vacío, es opcional
+
+    if not codigo or not nombre:
+        return JsonResponse({"ok": False, "error": "datos_incompletos"})
+
+    ficha, creada = CatalogoProducto.objects.get_or_create(
+        codigo_barra=codigo,
+        defaults={"nombre": nombre, "origen": "manual"},
+    )
+    if not creada:
+        ficha.nombre = nombre  # permite corregir el nombre si ya existía
+
+    if foto:
+        ficha.foto_archivo = foto
+
+    ficha.save()
+
+    return JsonResponse({
+        "ok": True,
+        "nombre": ficha.nombre,
+        "foto": ficha.foto or "",
+    })
+

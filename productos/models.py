@@ -17,6 +17,46 @@ class Configuracion(models.Model):
         config, _ = cls.objects.get_or_create(pk=1)
         return config
 
+class CatalogoProducto(models.Model):
+    """
+    Ficha única por código de barra: nombre + foto.
+    Se completa automáticamente desde Open Food Facts, o manualmente
+    si la API no tiene el producto. Una vez completada, todos los
+    lotes futuros de ese código ya muestran nombre y foto sin pedir nada.
+    """
+    ORIGEN_CHOICES = [
+        ("api",     "Open Food Facts"),
+        ("manual",  "Ingresado manualmente"),
+    ]
+
+    codigo_barra = models.CharField(max_length=100, unique=True, db_index=True)
+    nombre       = models.CharField(max_length=200)
+    marca        = models.CharField(max_length=120, blank=True)
+
+    # La foto puede venir de una URL externa (API) o subida por el usuario
+    foto_url     = models.URLField(max_length=500, blank=True)   # foto de la API
+    foto_archivo = models.ImageField(upload_to="productos_fotos/", blank=True, null=True)  # foto subida manual
+
+    origen       = models.CharField(max_length=10, choices=ORIGEN_CHOICES, default="manual")
+    fecha_creado = models.DateTimeField(auto_now_add=True)
+    fecha_actualizado = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Catálogo de producto"
+        verbose_name_plural = "Catálogo de productos"
+        ordering = ["nombre"]
+
+    def __str__(self):
+        return f"{self.nombre} ({self.codigo_barra})"
+
+    @property
+    def foto(self):
+        """Devuelve la URL de la foto a mostrar, sea de la API o subida manual."""
+        if self.foto_archivo:
+            return self.foto_archivo.url
+        if self.foto_url:
+            return self.foto_url
+        return None
 
 class Producto(models.Model):
     codigo_barra = models.CharField(max_length=100, verbose_name="Código de barra")
