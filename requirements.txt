@@ -3,3 +3,5 @@ gunicorn==26.0.0
 whitenoise==6.7.0
 sqlparse==0.5.3
 tzdata==2025.2
+requests==2.32.3
+Pillow==12.1.1

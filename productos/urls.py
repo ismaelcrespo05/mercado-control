@@ -19,4 +19,6 @@ urlpatterns = [
     path("danios/", views.listar_danios, name="listar_danios"),
     path("revisar-danio/<int:pk>/", views.revisar_danio, name="revisar_danio"),
     path("configuracion/", views.configuracion, name="configuracion"),
+    path("consultar-codigo/",     views.consultar_codigo,      name="consultar_codigo"),
+    path("guardar-ficha-manual/", views.guardar_ficha_manual,  name="guardar_ficha_manual"),
 ]
