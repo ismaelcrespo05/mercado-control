@@ -2,19 +2,20 @@
 {% block title %}Escanear producto — VenceYa{% endblock %}
 
 {% block content %}
-<h1>Registrar producto</h1>
+<h1 data-i18n="escanearPage.title">Registrar producto</h1>
 
 <div class="card" style="max-width: 560px;">
   <form method="post" id="scan-form">
     {% csrf_token %}
 
     <div class="form-group">
-      <label for="codigo_barra">Código de barra</label>
+      <label for="codigo_barra" data-i18n="forms.codigo">Código de barra</label>
       <div style="display:flex; gap:0.5rem;">
         <input
           type="tel"
           id="codigo_barra"
           name="codigo_barra"
+          data-i18n="placeholders.codigo"
           placeholder="Escanea o escribe el código"
           autofocus
           autocomplete="off"
@@ -35,25 +36,24 @@
 
     <!-- ESCÁNER DE CÁMARA -->
     <div id="scanner-container" style="display:none; margin-bottom:1.25rem;">
-      <div style="position:relative; border-radius:10px; overflow:hidden; background:#000; aspect-ratio:4/3; max-height:300px;">
-        <video id="scanner-video" style="width:100%; height:100%; object-fit:cover;" playsinline muted></video>
-        <!-- línea de escaneo animada -->
+      <div style="position:relative; border-radius:10px; overflow:hidden; background:#000; aspect-ratio:4/3; max-height:340px;">
+        <video id="scanner-video" style="width:100%; height:100%; object-fit:cover;" playsinline muted autoplay></video>
         <div style="position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;">
-          <div id="scan-line" style="position:absolute;left:10%;right:10%;top:30%;height:2px;background:var(--accent);box-shadow:0 0 8px var(--accent);animation:scan 2s linear infinite;"></div>
-          <!-- esquinas del visor -->
-          <div style="position:absolute;top:15%;left:10%;width:20px;height:20px;border-top:3px solid var(--accent);border-left:3px solid var(--accent);border-radius:2px 0 0 0;"></div>
-          <div style="position:absolute;top:15%;right:10%;width:20px;height:20px;border-top:3px solid var(--accent);border-right:3px solid var(--accent);border-radius:0 2px 0 0;"></div>
-          <div style="position:absolute;bottom:15%;left:10%;width:20px;height:20px;border-bottom:3px solid var(--accent);border-left:3px solid var(--accent);border-radius:0 0 0 2px;"></div>
-          <div style="position:absolute;bottom:15%;right:10%;width:20px;height:20px;border-bottom:3px solid var(--accent);border-right:3px solid var(--accent);border-radius:0 0 2px 0;"></div>
+          <div id="scan-line" style="position:absolute;left:8%;right:8%;top:48%;height:2px;background:var(--accent);box-shadow:0 0 8px var(--accent);"></div>
+          <div style="position:absolute;top:25%;left:8%;width:24px;height:24px;border-top:3px solid var(--accent);border-left:3px solid var(--accent);"></div>
+          <div style="position:absolute;top:25%;right:8%;width:24px;height:24px;border-top:3px solid var(--accent);border-right:3px solid var(--accent);"></div>
+          <div style="position:absolute;bottom:25%;left:8%;width:24px;height:24px;border-bottom:3px solid var(--accent);border-left:3px solid var(--accent);"></div>
+          <div style="position:absolute;bottom:25%;right:8%;width:24px;height:24px;border-bottom:3px solid var(--accent);border-right:3px solid var(--accent);"></div>
         </div>
-        <p style="position:absolute;bottom:8px;left:0;right:0;text-align:center;color:#fff;font-size:0.75rem;text-shadow:0 1px 3px #000;" id="scan-status">Apuntá al código de barras</p>
+        <p style="position:absolute;bottom:8px;left:0;right:0;text-align:center;color:#fff;font-size:0.8rem;text-shadow:0 1px 3px #000;font-weight:600;" id="scan-status">Acercá el código, bien centrado y derecho</p>
       </div>
-      <button type="button" class="btn btn-ghost btn-sm" onclick="cerrarCamara()" style="margin-top:0.5rem; width:100%;">
-        ✕ Cerrar cámara
-      </button>
+      <div style="display:flex; gap:0.5rem; margin-top:0.5rem;">
+        <button type="button" class="btn btn-ghost btn-sm" onclick="cambiarLinterna()" id="btnLinterna" style="flex:1; display:none;">💡 Linterna</button>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="cerrarCamara()" style="flex:1;">✕ Cerrar</button>
+      </div>
     </div>
 
-    <!-- TARJETA DE PRODUCTO ENCONTRADO (con foto) -->
+    <!-- TARJETA DE PRODUCTO ENCONTRADO -->
     <div id="producto-encontrado" style="display:none; margin-bottom:1.25rem; padding:1rem; background:var(--surface2); border-radius:10px; border:1px solid var(--accent);">
       <div style="display:flex; gap:1rem; align-items:center;">
         <img id="foto-producto" src="" alt="" style="width:64px; height:64px; object-fit:cover; border-radius:8px; background:var(--border); display:none;">
@@ -67,14 +67,13 @@
       </div>
     </div>
 
-    <!-- AVISO: producto nuevo -->
     <div id="producto-nuevo-aviso" style="display:none; margin-bottom:1.25rem; padding:0.85rem 1rem; background:color-mix(in srgb, var(--warn) 10%, var(--surface2)); border-radius:10px; border:1px solid var(--warn); font-size:0.85rem; color:var(--warn);">
       ℹ️ Producto nuevo — completá el nombre y opcionalmente una foto. Quedará guardado para la próxima vez.
     </div>
 
     <div class="form-group">
-      <label for="nombre">Nombre del producto</label>
-      <input type="text" id="nombre" name="nombre" placeholder="Ej: Leche Integral 1L" required>
+      <label for="nombre" data-i18n="forms.nombre">Nombre del producto</label>
+      <input type="text" id="nombre" name="nombre" data-i18n="placeholders.nombre" placeholder="Ej: Leche Integral 1L" required>
     </div>
 
     <div class="form-group" id="campo-foto-manual" style="display:none;">
@@ -84,48 +83,46 @@
     </div>
 
     <div class="form-group">
-      <label for="fecha_vencimiento">Fecha de vencimiento</label>
+      <label for="fecha_vencimiento" data-i18n="forms.fecha">Fecha de vencimiento</label>
       <input type="date" id="fecha_vencimiento" name="fecha_vencimiento" required>
     </div>
 
     <div class="form-group">
-      <label for="cantidad">Cantidad de unidades con esta fecha</label>
+      <label for="cantidad" data-i18n="escanearPage.cantidadLabel">Cantidad de unidades con esta fecha</label>
       <input type="number" id="cantidad" name="cantidad" value="1" min="1" required>
     </div>
 
     <div style="display:flex; gap:0.75rem; margin-top:1.5rem;">
-      <button type="submit" class="btn btn-primary">Guardar producto</button>
-      <a href="{% url 'dashboard' %}" class="btn btn-ghost">Cancelar</a>
+      <button type="submit" class="btn btn-primary" data-i18n="buttons.guardar">Guardar producto</button>
+      <a href="{% url 'dashboard' %}" class="btn btn-ghost" data-i18n="buttons.cancelar">Cancelar</a>
     </div>
   </form>
 </div>
 
-<style>
-@keyframes scan { 0% { top:20%; } 50% { top:75%; } 100% { top:20%; } }
-</style>
-
-<!-- ZXing: librería moderna de escaneo, funciona bien en móviles -->
+<!-- ZXing: librería moderna de escaneo -->
 <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js"></script>
 
 <script>
-  const codigoInput       = document.getElementById("codigo_barra");
-  const nombreInput       = document.getElementById("nombre");
-  const errorMsg          = document.getElementById("codigo-error");
-  const buscandoMsg       = document.getElementById("buscando-msg");
+  const codigoInput        = document.getElementById("codigo_barra");
+  const nombreInput        = document.getElementById("nombre");
+  const errorMsg           = document.getElementById("codigo-error");
+  const buscandoMsg        = document.getElementById("buscando-msg");
   const productoEncontrado = document.getElementById("producto-encontrado");
   const productoNuevoAviso = document.getElementById("producto-nuevo-aviso");
-  const campoFotoManual   = document.getElementById("campo-foto-manual");
-  const fotoProducto      = document.getElementById("foto-producto");
-  const nombreEncontrado  = document.getElementById("nombre-encontrado");
-  const marcaEncontrada   = document.getElementById("marca-encontrada");
-  const origenLabel       = document.getElementById("origen-label");
-  const scanStatus        = document.getElementById("scan-status");
+  const campoFotoManual    = document.getElementById("campo-foto-manual");
+  const fotoProducto       = document.getElementById("foto-producto");
+  const nombreEncontrado   = document.getElementById("nombre-encontrado");
+  const marcaEncontrada    = document.getElementById("marca-encontrada");
+  const origenLabel        = document.getElementById("origen-label");
+  const scanStatus         = document.getElementById("scan-status");
+  const btnLinterna        = document.getElementById("btnLinterna");
 
   let debounce;
   let codigoYaConsultado = "";
-  let lector = null;  // instancia de ZXing
+  let lector = null;
+  let videoTrack = null;
+  let linternaEncendida = false;
 
-  // ─── ESTADO DEL FORMULARIO ───────────────────────────────
   function resetearEstadoProducto() {
     productoEncontrado.style.display = "none";
     productoNuevoAviso.style.display = "none";
@@ -135,7 +132,6 @@
     nombreInput.readOnly = false;
   }
 
-  // ─── CONSULTA AL SERVIDOR ────────────────────────────────
   async function consultarCodigo(codigo) {
     if (!codigo || codigoYaConsultado === codigo) return;
     codigoYaConsultado = codigo;
@@ -155,7 +151,6 @@
         origenLabel.textContent = data.origen === "api"
           ? "Encontrado en base de datos pública"
           : "Producto ya registrado antes";
-
         if (data.foto) {
           fotoProducto.src = data.foto;
           fotoProducto.style.display = "block";
@@ -172,7 +167,6 @@
     }
   }
 
-  // ─── VALIDACIÓN NUMÉRICA ─────────────────────────────────
   codigoInput.addEventListener("input", () => {
     const valor = codigoInput.value;
     if (!/^[0-9]*$/.test(valor)) {
@@ -197,48 +191,71 @@
     }
   });
 
-  // ─── ESCÁNER CON ZXING ───────────────────────────────────
+  // ─── ESCÁNER MEJORADO ────────────────────────────────────
   function abrirCamara() {
     document.getElementById("scanner-container").style.display = "block";
     const video = document.getElementById("scanner-video");
 
-    // ZXing lee directamente desde el elemento <video>
     const hints = new Map();
-    const formatos = [
+    hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS, [
       ZXing.BarcodeFormat.EAN_13,
       ZXing.BarcodeFormat.EAN_8,
       ZXing.BarcodeFormat.CODE_128,
       ZXing.BarcodeFormat.CODE_39,
       ZXing.BarcodeFormat.UPC_A,
       ZXing.BarcodeFormat.UPC_E,
-    ];
-    hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS, formatos);
-    // TRY_HARDER hace que intente más aunque el código esté algo torcido
+      ZXing.BarcodeFormat.ITF,
+    ]);
     hints.set(ZXing.DecodeHintType.TRY_HARDER, true);
+    // ASSUME_GS1 ayuda con códigos EAN-13 brasileños
+    hints.set(ZXing.DecodeHintType.ASSUME_GS1, false);
 
-    lector = new ZXing.BrowserMultiFormatReader(hints);
+    lector = new ZXing.BrowserMultiFormatReader(hints, 150); // escanea cada 150ms en vez del default (~500ms)
 
-    lector.decodeFromVideoDevice(
-      null,   // null = usa la cámara trasera por defecto
-      video,
-      (resultado, error) => {
-        if (resultado) {
-          const codigo = resultado.getText();
-          if (/^[0-9]+$/.test(codigo)) {
-            codigoInput.value = codigo;
-            codigoInput.dispatchEvent(new Event("input"));
-            cerrarCamara();
-          } else {
-            scanStatus.textContent = "Código no válido, intentá de nuevo";
-          }
-        }
-        // Los errores de "no encontré nada en este frame" son normales,
-        // ZXing los lanza constantemente mientras escanea — los ignoramos.
+    // Pedimos resolución alta explícitamente — la clave del problema
+    const constraints = {
+      video: {
+        facingMode: "environment",
+        width:  { min: 720, ideal: 1920, max: 1920 },
+        height: { min: 480, ideal: 1080, max: 1080 },
+        // Pedimos enfoque continuo si el navegador lo soporta
+        focusMode: "continuous",
+        advanced: [{ focusMode: "continuous" }]
       }
-    ).catch(err => {
+    };
+
+    lector.decodeFromConstraints(constraints, video, (resultado, error) => {
+      if (resultado) {
+        const codigo = resultado.getText();
+        if (/^[0-9]+$/.test(codigo)) {
+          scanStatus.textContent = "¡Código detectado!";
+          codigoInput.value = codigo;
+          codigoInput.dispatchEvent(new Event("input"));
+          cerrarCamara();
+        }
+      }
+      // Errores de "no encontrado en este frame" son normales y constantes, se ignoran.
+    }).then(() => {
+      // Guardamos el track de video para poder controlar la linterna
+      const stream = video.srcObject;
+      if (stream) {
+        videoTrack = stream.getVideoTracks()[0];
+        const capabilities = videoTrack.getCapabilities ? videoTrack.getCapabilities() : {};
+        if (capabilities.torch) {
+          btnLinterna.style.display = "block";
+        }
+      }
+    }).catch(err => {
       alert("No se pudo acceder a la cámara: " + err.message);
       cerrarCamara();
     });
+  }
+
+  function cambiarLinterna() {
+    if (!videoTrack) return;
+    linternaEncendida = !linternaEncendida;
+    videoTrack.applyConstraints({ advanced: [{ torch: linternaEncendida }] })
+      .catch(() => { linternaEncendida = !linternaEncendida; });
   }
 
   function cerrarCamara() {
@@ -246,8 +263,11 @@
       lector.reset();
       lector = null;
     }
+    videoTrack = null;
+    linternaEncendida = false;
+    btnLinterna.style.display = "none";
     document.getElementById("scanner-container").style.display = "none";
-    scanStatus.textContent = "Apuntá al código de barras";
+    scanStatus.textContent = "Acercá el código, bien centrado y derecho";
   }
 </script>
 {% endblock %}

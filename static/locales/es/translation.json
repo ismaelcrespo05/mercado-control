@@ -87,5 +87,13 @@
     "descartado": "Descartado",
     "reportadoPor": "Reportado por",
     "fechaReporte": "Fecha de reporte"
+  },
+  "escanearPage": {
+    "title": "Registrar producto",
+    "cantidadLabel": "Cantidad de unidades con esta fecha"
+  },
+  "filters": {
+    "desde": "Desde",
+    "hasta": "Hasta"
   }
-}
+ }

@@ -87,5 +87,13 @@
     "descartado": "Rejeté",
     "reportadoPor": "Signalé par",
     "fechaReporte": "Date du signalement"
+  },
+  "escanearPage": {
+    "title": "Enregistrer le produit",
+    "cantidadLabel": "Quantité d'unités avec cette date"
+  },
+  "filters": {
+    "desde": "Depuis",
+    "hasta": "Jusqu'à"
   }
 }

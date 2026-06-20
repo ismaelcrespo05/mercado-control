@@ -87,5 +87,13 @@
     "descartado": "Discarded",
     "reportadoPor": "Reported by",
     "fechaReporte": "Report date"
+  },
+  "escanearPage": {
+    "title": "Register product",
+    "cantidadLabel": "Quantity of units with this date"
+  },
+  "filters": {
+    "desde": "From",
+    "hasta": "To"
   }
 }
