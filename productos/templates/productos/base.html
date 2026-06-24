@@ -408,6 +408,7 @@
       <a href="{% url 'dashboard' %}" {% if request.resolver_match.url_name == 'dashboard' %}class="active"{% endif %} data-i18n="nav.inicio">Inicio</a>
       <a href="{% url 'configuracion' %}" {% if request.resolver_match.url_name == 'configuracion' %}class="active"{% endif %} data-i18n="nav.config">Configuración</a>
       <a href="{% url 'listar_danios' %}" {% if request.resolver_match.url_name == 'listar_danios' %}class="active"{% endif %} data-i18n="nav.danios">Daños</a>
+      <a href="{% url 'galeria_productos' %}" {% if request.resolver_match.url_name == 'galeria_productos' %}class="active"{% endif %} data-i18n="nav.galeria">🖼️ Galería</a>
     </div>
   </div>
 
@@ -459,6 +460,7 @@
     <a href="{% url 'dashboard' %}" data-i18n="nav.inicio">Inicio</a>
     <a href="{% url 'configuracion' %}" data-i18n="nav.config">Configuración</a>
     <a href="{% url 'listar_danios' %}" data-i18n="nav.danios">Daños</a>
+    <a href="{% url 'galeria_productos' %}" data-i18n="nav.galeria">🖼️ Galería</a>
     {% if user.is_staff %}
     <a href="{% url 'admin_panel' %}">Panel admin</a>
     {% endif %}

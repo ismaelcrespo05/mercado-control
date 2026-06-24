@@ -5,7 +5,8 @@
     "escanear": "+ Escanear",
     "logout": "Sair",
     "perfil": "Minha conta",
-    "danios": "Danos/Avaria"
+    "danios": "Danos/Avaria",
+    "galeria": "🖼️ Galeria"
   },
   "login": {
     "title": "VenceYa",
@@ -87,5 +88,13 @@
     "descartado": "Descartado",
     "reportadoPor": "Reportado por",
     "fechaReporte": "Data do relato"
+  },
+  "escanearPage": {
+    "title": "Registrar produto",
+    "cantidadLabel": "Quantidade de unidades com esta data"
+  },
+  "filters": {
+    "desde": "De",
+    "hasta": "Até"
   }
 }

@@ -614,4 +614,31 @@ def guardar_ficha_manual(request):
         "nombre": ficha.nombre,
         "foto": ficha.foto or "",
     })
+    
+@login_required(login_url='login')
+def galeria_productos(request):
+    """
+    Muestra todas las fichas del catálogo (CatalogoProducto) con su foto,
+    sin importar el stock actual. Es la "biblioteca visual" de todo lo
+    que el mercado ha registrado alguna vez.
+    """
+    busqueda = request.GET.get("q", "").strip()
+
+    fichas = CatalogoProducto.objects.all().order_by("nombre")
+
+    if busqueda:
+        fichas = fichas.filter(nombre__icontains=busqueda)
+
+    # Separamos las que tienen foto de las que no, para mostrar
+    # primero las que sí tienen imagen (más útil visualmente)
+    con_foto = [f for f in fichas if f.foto]
+    sin_foto = [f for f in fichas if not f.foto]
+
+    return render(request, "productos/galeria.html", {
+        "con_foto": con_foto,
+        "sin_foto": sin_foto,
+        "busqueda": busqueda,
+        "total": fichas.count(),
+    })
+    
 

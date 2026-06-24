@@ -5,7 +5,8 @@
     "escanear": "+ Escanear",
     "logout": "Cerrar sesión",
     "perfil": "Mi cuenta",
-    "danios": "Daños/Avería"
+    "danios": "Daños/Avería",
+    "galeria": "🖼️ Galería"
   },
   "login": {
     "title": "VenceYa",
@@ -96,4 +97,4 @@
     "desde": "Desde",
     "hasta": "Hasta"
   }
- }
+}
