@@ -12,7 +12,7 @@ import json
 from django.utils import timezone
 from datetime import timedelta
 from .models import CatalogoProducto
-from .servicios import buscar_en_openfoodfacts
+from .servicios import buscar_en_openfoodfacts, buscar_por_nombre_openfoodfacts
 
 ROLES_GESTIONABLES = {
     "admin": "Administrador",
@@ -640,5 +640,90 @@ def galeria_productos(request):
         "busqueda": busqueda,
         "total": fichas.count(),
     })
+
+
+@login_required(login_url='login')
+def buscar_por_nombre(request):
+    """
+    Búsqueda combinada por NOMBRE: primero en tu catálogo propio
+    (instantáneo), y si el usuario lo pide explícitamente, también
+    en Open Food Facts (consulta externa, más lenta, con límite de uso).
+    """
+    nombre = request.GET.get("nombre", "").strip()
+    incluir_externa = request.GET.get("externa") == "1"
+
+    if not nombre or len(nombre) < 2:
+        return JsonResponse({"propios": [], "externos": []})
+
+    # 1. Buscar en tu catálogo propio — siempre, es gratis e instantáneo
+    fichas_propias = CatalogoProducto.objects.filter(nombre__icontains=nombre)[:15]
+    propios = [
+        {
+            "codigo_barra": f.codigo_barra,
+            "nombre": f.nombre,
+            "marca": f.marca,
+            "foto": f.foto or "",
+            "origen": "catalogo",
+        }
+        for f in fichas_propias
+    ]
+
+    externos = []
+    if incluir_externa:
+        # 2. Buscar en Open Food Facts — solo si el usuario lo pidió explícitamente
+        #    (botón aparte), para no gastar el límite de 10 búsquedas/minuto
+        #    en cada tecla que escribe.
+        resultados_api = buscar_por_nombre_openfoodfacts(nombre)
+
+        # Evitamos mostrar duplicados: si un código ya está en nuestro catálogo,
+        # no lo repetimos en la sección "externos"
+        codigos_propios = {f.codigo_barra for f in fichas_propias}
+        externos = [
+            r for r in resultados_api
+            if r["codigo_barra"] not in codigos_propios
+        ]
+
+    return JsonResponse({"propios": propios, "externos": externos})
+
+
+@login_required(login_url='login')
+def importar_de_externa(request):
+    """
+    Cuando el usuario elige un resultado de Open Food Facts en el buscador,
+    esta vista lo guarda en nuestro CatalogoProducto para futuras consultas.
+    """
+    if request.method != "POST":
+        return JsonResponse({"ok": False}, status=405)
+
+    codigo = request.POST.get("codigo_barra", "").strip()
+    nombre = request.POST.get("nombre", "").strip()
+    marca  = request.POST.get("marca", "").strip()
+    foto_url = request.POST.get("foto_url", "").strip()
+
+    if not codigo or not nombre:
+        return JsonResponse({"ok": False, "error": "datos_incompletos"})
+
+    ficha, creada = CatalogoProducto.objects.get_or_create(
+        codigo_barra=codigo,
+        defaults={
+            "nombre": nombre,
+            "marca": marca,
+            "foto_url": foto_url,
+            "origen": "api",
+        },
+    )
+
+    return JsonResponse({
+        "ok": True,
+        "creada": creada,
+        "codigo_barra": ficha.codigo_barra,
+        "nombre": ficha.nombre,
+    })
+
+
+@login_required(login_url='login')
+def pagina_buscador(request):
+    """Página con el formulario de búsqueda por nombre."""
+    return render(request, "productos/buscador.html")
     
 

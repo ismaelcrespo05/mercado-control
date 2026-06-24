@@ -23,48 +23,30 @@
 <!-- FILTROS -->
 <div class="card" style="margin-bottom: 1.5rem;">
   <h2 data-i18n="dashboard.filtros">Filtros</h2>
-  <form method="get" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+  <form method="get" style="margin-bottom: 1rem;">
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
     <div>
-      <input
-        type="text"
-        name="nombre"
-        placeholder="Buscar por nombre..."
-        value="{{ nombre_filter }}"
-        data-i18n-placeholder="placeholders.buscar"
-      />
+      <label for="filtro_nombre" data-i18n="forms.nombre">Nombre</label>
+      <input type="text" id="filtro_nombre" name="nombre" placeholder="Buscar por nombre..." value="{{ nombre_filter }}" data-i18n-placeholder="placeholders.buscar" />
     </div>
     <div>
-      <input
-        type="text"
-        name="codigo"
-        placeholder="Buscar por código..."
-        value="{{ codigo_filter }}"
-        data-i18n-placeholder="placeholders.buscar"
-      />
+      <label for="filtro_codigo" data-i18n="forms.codigo">Código</label>
+      <input type="text" id="filtro_codigo" name="codigo" placeholder="Buscar por código..." value="{{ codigo_filter }}" data-i18n-placeholder="placeholders.buscar" />
     </div>
     <div>
       <label for="fecha_desde" data-i18n="filters.desde">Desde:</label>
-      <input
-        type="date"
-        id="fecha_desde"
-        name="fecha_desde"
-        value="{{ fecha_desde }}"
-      />
+      <input type="date" id="fecha_desde" name="fecha_desde" value="{{ fecha_desde }}" />
     </div>
     <div>
       <label for="fecha_hasta" data-i18n="filters.hasta">Hasta:</label>
-      <input
-        type="date"
-        id="fecha_hasta"
-        name="fecha_hasta"
-        value="{{ fecha_hasta }}"
-      />
+      <input type="date" id="fecha_hasta" name="fecha_hasta" value="{{ fecha_hasta }}" />
     </div>
-    <div style="display: flex; gap: 0.5rem; align-items: flex-end;">
-      <button type="submit" class="btn btn-primary" data-i18n="dashboard.aplicar">Aplicar</button>
-      <a href="{% url 'dashboard' %}" class="btn btn-ghost" data-i18n="dashboard.limpiar">Limpiar</a>
-    </div>
-  </form>
+  </div>
+  <div style="display: flex; gap: 0.5rem;">
+    <button type="submit" class="btn btn-primary" data-i18n="dashboard.aplicar">Aplicar</button>
+    <a href="{% url 'dashboard' %}" class="btn btn-ghost" data-i18n="dashboard.limpiar">Limpiar</a>
+  </div>
+</form>
 </div>
 
 <!-- VENCIDOS -->

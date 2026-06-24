@@ -187,8 +187,8 @@
       color: var(--text-muted);
       border-radius: 8px;
       padding: 0 0.65rem;
-      height: 36px;
-      display: flex;
+      height: 38px;
+      display: inline-flex;
       align-items: center;
       cursor: pointer;
       font-size: 0.75rem;
@@ -249,8 +249,8 @@
       color: var(--text-muted);
       border-radius: 8px;
       width: 36px;
-      height: 36px;
-      display: flex;
+      height: 38px;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
@@ -268,6 +268,11 @@
       text-decoration: none;
       font-size: 0.875rem;
       transition: background 0.15s;
+      height: 38px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
     }
     .nav-scan:hover { background: var(--accent-dim) !important; }
 
@@ -324,6 +329,14 @@
     .form-group { margin-bottom: 1.25rem; }
     label { display: block; font-size: 0.82rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.4rem; }
     input, select { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); padding: 0.65rem 0.9rem; font-size: 0.95rem; font-family: var(--font); transition: border-color 0.15s; }
+    /* Igualar alturas en la fila de filtros del dashboard */
+    input[type="text"],
+    input[type="date"],
+    .form-actions .btn {
+    height: 42px;
+    box-sizing: border-box;
+    }
+
     input:focus, select:focus { outline: none; border-color: var(--accent); }
 
     .section { margin-bottom: 2.5rem; }
@@ -353,7 +366,7 @@
       }
 
       .dropdown-toggle {
-        height: 40px;
+        height: 38px;
         min-width: 40px;
       }
 
@@ -385,7 +398,7 @@
       }
 
       .dropdown-toggle {
-        height: 40px;
+        height: 38px;
       }
 
       .nav-scan {
@@ -409,6 +422,7 @@
       <a href="{% url 'configuracion' %}" {% if request.resolver_match.url_name == 'configuracion' %}class="active"{% endif %} data-i18n="nav.config">Configuración</a>
       <a href="{% url 'listar_danios' %}" {% if request.resolver_match.url_name == 'listar_danios' %}class="active"{% endif %} data-i18n="nav.danios">Daños</a>
       <a href="{% url 'galeria_productos' %}" {% if request.resolver_match.url_name == 'galeria_productos' %}class="active"{% endif %} data-i18n="nav.galeria">🖼️ Galería</a>
+      <a href="{% url 'pagina_buscador' %}" {% if request.resolver_match.url_name == 'pagina_buscador' %}class="active"{% endif %}>🔍 Buscar</a>
     </div>
   </div>
 
@@ -432,7 +446,7 @@
     <button class="icon-btn" id="themeBtn" onclick="toggleTheme()" title="Cambiar tema">🌙</button>
 
     <!-- Escanear en desktop -->
-    <a href="{% url 'escanear' %}" class="nav-scan" data-i18n="nav.escanear" style="">+ Escanear</a>
+    <a href="{% url 'escanear' %}" class="nav-scan" data-i18n="nav.escanear">+ Escanear</a>
 
     <!-- Usuario Dropdown -->
     {% if user.is_authenticated %}
@@ -461,6 +475,7 @@
     <a href="{% url 'configuracion' %}" data-i18n="nav.config">Configuración</a>
     <a href="{% url 'listar_danios' %}" data-i18n="nav.danios">Daños</a>
     <a href="{% url 'galeria_productos' %}" data-i18n="nav.galeria">🖼️ Galería</a>
+    <a href="{% url 'pagina_buscador' %}">🔍 Buscar</a>
     {% if user.is_staff %}
     <a href="{% url 'admin_panel' %}">Panel admin</a>
     {% endif %}

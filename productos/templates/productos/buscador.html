@@ -1,0 +1,175 @@
+{% extends "productos/base.html" %}
+{% block title %}Buscar producto por nombre — VenceYa{% endblock %}
+
+{% block content %}
+<div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
+  <h1 style="margin:0;">🔍 Buscar producto por nombre</h1>
+  <a href="{% url 'dashboard' %}" class="btn btn-ghost">← Volver</a>
+</div>
+
+<div class="card" style="margin-bottom:1.5rem; max-width:600px;">
+  <div class="form-group">
+    <label for="input-nombre">Nombre del producto</label>
+    <input type="text" id="input-nombre" placeholder="Ej: leche, arroz, detergente..." autofocus>
+  </div>
+  <div style="display:flex; gap:0.75rem;">
+    <button type="button" class="btn btn-primary" onclick="buscarPropio()">Buscar en mi catálogo</button>
+    <button type="button" class="btn btn-ghost" onclick="buscarExterna()">🌐 Buscar también en base pública</button>
+  </div>
+  <p style="font-size:0.78rem; color:var(--text-muted); margin-top:0.6rem;">
+    La búsqueda en base pública es más lenta y tiene un límite de usos por minuto — usala cuando no encuentres el producto en tu propio catálogo.
+  </p>
+</div>
+
+<p id="estado-busqueda" style="color:var(--text-muted); font-size:0.875rem; margin-bottom:1rem; display:none;"></p>
+
+<!-- Resultados de tu catálogo -->
+<div id="resultados-propios" style="display:none;">
+  <h2 style="margin-bottom:1rem;">📦 En tu catálogo</h2>
+  <div id="grid-propios" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:1rem; margin-bottom:2rem;"></div>
+</div>
+
+<!-- Resultados de Open Food Facts -->
+<div id="resultados-externos" style="display:none;">
+  <h2 style="margin-bottom:1rem;">🌐 Base pública (Open Food Facts)</h2>
+  <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:1rem;">Clic en "Agregar a mi catálogo" para guardarlo y que aparezca automáticamente la próxima vez que escanees ese código.</p>
+  <div id="grid-externos" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:1rem;"></div>
+</div>
+
+<style>
+  .resultado-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.75rem;
+    text-align: center;
+  }
+  .resultado-card img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 0.6rem;
+    background: var(--surface2);
+  }
+  .resultado-card .sin-foto {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 8px;
+    margin-bottom: 0.6rem;
+    background: var(--surface2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: var(--text-muted);
+  }
+</style>
+
+<script>
+  const inputNombre = document.getElementById("input-nombre");
+  const estadoBusqueda = document.getElementById("estado-busqueda");
+  const resultadosPropios = document.getElementById("resultados-propios");
+  const resultadosExternos = document.getElementById("resultados-externos");
+  const gridPropios = document.getElementById("grid-propios");
+  const gridExternos = document.getElementById("grid-externos");
+
+  inputNombre.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") buscarPropio();
+  });
+
+  function tarjetaHTML(item, esExterno) {
+    const fotoHTML = item.foto
+      ? `<img src="${item.foto}" alt="${item.nombre}">`
+      : `<div class="sin-foto">📦</div>`;
+
+    const boton = esExterno
+      ? `<button class="btn btn-sm btn-primary" style="width:100%; margin-top:0.4rem;" onclick='agregarACatalogo(${JSON.stringify(item)})'>+ Agregar a mi catálogo</button>`
+      : `<span class="badge badge-ok" style="margin-top:0.4rem;">En catálogo</span>`;
+
+    return `
+      <div class="resultado-card">
+        ${fotoHTML}
+        <p style="font-weight:600; font-size:0.85rem; line-height:1.3;">${item.nombre}</p>
+        ${item.marca ? `<p style="font-size:0.75rem; color:var(--text-muted);">${item.marca}</p>` : ""}
+        <p style="font-size:0.7rem; color:var(--text-muted); font-family:monospace;">${item.codigo_barra}</p>
+        ${boton}
+      </div>
+    `;
+  }
+
+  async function buscarPropio() {
+    const nombre = inputNombre.value.trim();
+    if (nombre.length < 2) return;
+
+    estadoBusqueda.style.display = "block";
+    estadoBusqueda.textContent = "🔍 Buscando en tu catálogo...";
+    resultadosExternos.style.display = "none";
+
+    const res = await fetch(`/buscar-por-nombre/?nombre=${encodeURIComponent(nombre)}`);
+    const data = await res.json();
+
+    estadoBusqueda.style.display = "none";
+
+    if (data.propios.length === 0) {
+      resultadosPropios.style.display = "block";
+      gridPropios.innerHTML = `<p style="color:var(--text-muted); grid-column:1/-1;">No se encontró nada en tu catálogo. Probá buscar en la base pública.</p>`;
+      return;
+    }
+
+    resultadosPropios.style.display = "block";
+    gridPropios.innerHTML = data.propios.map(item => tarjetaHTML(item, false)).join("");
+  }
+
+  async function buscarExterna() {
+    const nombre = inputNombre.value.trim();
+    if (nombre.length < 2) {
+      alert("Escribí al menos 2 letras para buscar.");
+      return;
+    }
+
+    estadoBusqueda.style.display = "block";
+    estadoBusqueda.textContent = "🌐 Buscando en base pública... puede tardar unos segundos.";
+
+    const res = await fetch(`/buscar-por-nombre/?nombre=${encodeURIComponent(nombre)}&externa=1`);
+    const data = await res.json();
+
+    estadoBusqueda.style.display = "none";
+
+    resultadosPropios.style.display = "block";
+    gridPropios.innerHTML = data.propios.length
+      ? data.propios.map(item => tarjetaHTML(item, false)).join("")
+      : `<p style="color:var(--text-muted); grid-column:1/-1;">Nada en tu catálogo todavía.</p>`;
+
+    resultadosExternos.style.display = "block";
+    gridExternos.innerHTML = data.externos.length
+      ? data.externos.map(item => tarjetaHTML(item, true)).join("")
+      : `<p style="color:var(--text-muted); grid-column:1/-1;">No se encontraron resultados en la base pública.</p>`;
+  }
+
+  async function agregarACatalogo(item) {
+    const formData = new FormData();
+    formData.append("codigo_barra", item.codigo_barra);
+    formData.append("nombre", item.nombre);
+    formData.append("marca", item.marca || "");
+    formData.append("foto_url", item.foto || "");
+    formData.append("csrfmiddlewaretoken", document.querySelector('[name=csrfmiddlewaretoken]')?.value || getCookie('csrftoken'));
+
+    const res = await fetch("/importar-externa/", { method: "POST", body: formData });
+    const data = await res.json();
+
+    if (data.ok) {
+      alert(`"${data.nombre}" agregado a tu catálogo. Ya lo vas a ver al escanear ese código.`);
+      buscarPropio();  // refresca la sección de "tu catálogo"
+    } else {
+      alert("No se pudo agregar. Intentá de nuevo.");
+    }
+  }
+
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  }
+</script>
+{% endblock %}
