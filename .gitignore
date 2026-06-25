@@ -1,11 +1,9 @@
+db.sqlite3
+db.sqlite3-journal
 __pycache__/
-*.py[cod]
-*.pyc.*
-
+*.pyc
 staticfiles/
-
-*.sqlite3-journal
-*.sqlite3-wal
-*.sqlite3-shm
-
+media/
+venv/
+env/
 .env
