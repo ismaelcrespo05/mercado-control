@@ -1,0 +1,100 @@
+{
+  "nav": {
+    "inicio": "Accueil",
+    "config": "Paramètres",
+    "escanear": "+ Scanner",
+    "logout": "Déconnexion",
+    "perfil": "Mon compte",
+    "danios": "Dommages",
+    "galeria": "🖼️ Galerie"
+  },
+  "login": {
+    "title": "VenceYa",
+    "subtitle": "Contrôle des dates",
+    "username": "Nom d'utilisateur",
+    "password": "Mot de passe",
+    "submit": "Connexion"
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "vencidos": "Expirés",
+    "alerta": "À expirer",
+    "ok": "En bon état",
+    "secVencidos": "🔴 Expirés",
+    "secAlerta": "🟡 À expirer bientôt",
+    "secOk": "🟢 En bon état",
+    "empty": "Aucun produit enregistré.",
+    "scanFirst": "Scanner le premier produit",
+    "filtros": "Filtres",
+    "aplicar": "Appliquer",
+    "limpiar": "Effacer les filtres"
+  },
+  "columns": {
+    "producto": "Produit",
+    "codigo": "Code",
+    "vence": "Expire",
+    "vencio": "Expiré",
+    "dias": "Jours restants",
+    "diasVenc": "Jours expirés",
+    "cant": "Qté.",
+    "acciones": "Actions"
+  },
+  "buttons": {
+    "venta": "Vente",
+    "editar": "Modifier",
+    "eliminar": "Supprimer",
+    "danio": "Signaler dommage",
+    "guardar": "Enregistrer",
+    "cancelar": "Annuler"
+  },
+  "forms": {
+    "nombre": "Nom du produit",
+    "codigo": "Code-barres",
+    "fecha": "Date d'expiration",
+    "fechaDesde": "De",
+    "fechaHasta": "À",
+    "cantidad": "Quantité",
+    "tipoDanio": "Type de dommage",
+    "motivo": "Raison/Description",
+    "estado": "Statut",
+    "search": "Chercher produit..."
+  },
+  "placeholders": {
+    "nombre": "Ex: Lait Intégral 1L",
+    "codigo": "Scannez ou entrez le code",
+    "buscar": "Chercher par nom ou code..."
+  },
+  "messages": {
+    "success": "Opération réussie",
+    "error": "Erreur d'opération",
+    "confirm": "Êtes-vous sûr?"
+  },
+  "config": {
+    "title": "Paramètres",
+    "diasAlerta": "Jours d'alerte avant expiration",
+    "guardar": "Enregistrer les paramètres"
+  },
+  "danio": {
+    "title": "Produits Endommagés",
+    "reportar": "Signaler dommage",
+    "listar": "Voir dommages",
+    "rasgado": "Déchiré",
+    "roto": "Cassé",
+    "echadoPerder": "Gâté",
+    "mojado": "Mouillé",
+    "otro": "Autre",
+    "reportado": "Signalé",
+    "revisado": "Examiné",
+    "descartado": "Rejeté",
+    "reportadoPor": "Signalé par",
+    "fechaReporte": "Date du signalement"
+  },
+  "escanearPage": {
+    "title": "Enregistrer le produit",
+    "cantidadLabel": "Quantité d'unités avec cette date"
+  },
+  "filters": {
+    "desde": "Depuis",
+    "hasta": "Jusqu'à"
+  }
+}

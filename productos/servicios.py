@@ -17,7 +17,7 @@ def buscar_en_openfoodfacts(codigo_barra):
 
     try:
         respuesta = requests.get(url, timeout=5, headers={
-            "User-Agent": "VenceYa-ControlVencimientos/1.0"
+            "User-Agent": "StockCheck-ControlVencimientos/1.0"
         })
         datos = respuesta.json()
     except (requests.RequestException, ValueError):
@@ -71,7 +71,7 @@ def buscar_por_nombre_openfoodfacts(nombre, limite=12):
 
     try:
         respuesta = requests.get(url, params=params, timeout=6, headers={
-            "User-Agent": "VenceYa-ControlVencimientos/1.0"
+            "User-Agent": "StockCheck-ControlVencimientos/1.0"
         })
         datos = respuesta.json()
     except (requests.RequestException, ValueError):

@@ -1,6 +1,6 @@
 {% extends "productos/base.html" %}
 
-{% block title %}Dashboard — VenceYa{% endblock %}
+{% block title %}Dashboard — StockCheck{% endblock %}
 
 {% block content %}
 <h1 data-i18n="dashboard.title">Panel de control</h1>
@@ -168,7 +168,6 @@
             {% if can_edit %}
             <a href="{% url 'editar' p.pk %}" class="btn btn-sm btn-ghost" data-i18n="buttons.editar">Editar</a>
             {% endif %}
-            <a href="{% url 'reportar_danio' p.pk %}" class="btn btn-sm btn-ghost" data-i18n="buttons.danio">Daño</a>
             {% if user.is_staff %}
             <form method="post" action="{% url 'eliminar' p.pk %}" style="display:inline" onsubmit="return confirm('¿Eliminar {{ p.nombre }}?')">
               {% csrf_token %}
