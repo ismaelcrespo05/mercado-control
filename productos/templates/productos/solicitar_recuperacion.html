@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recuperar contraseña — Mercatrol</title>
+  <style>
+    [data-theme="dark"]  { --bg:#0f1117; --surface:#1a1d27; --border:#2e3347; --text:#e8eaf0; --muted:#7a8099; --input:#22263a; }
+    :root { --accent:#00c988; --font:'Segoe UI',system-ui,sans-serif; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:var(--font); background:var(--bg); color:var(--text); min-height:100vh; display:flex; align-items:center; justify-content:center; }
+    .box { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:2.5rem 2rem; width:100%; max-width:400px; }
+    h1 { font-size:1.3rem; margin-bottom:0.5rem; text-align:center; }
+    p.sub { color:var(--muted); font-size:0.875rem; text-align:center; margin-bottom:1.5rem; }
+    .form-group { margin-bottom:1.1rem; }
+    label { display:block; font-size:0.78rem; font-weight:700; color:var(--muted); text-transform:uppercase; margin-bottom:0.4rem; }
+    input { width:100%; background:var(--input); border:1px solid var(--border); border-radius:8px; color:var(--text); padding:0.7rem 0.9rem; font-size:0.95rem; }
+    input:focus { outline:none; border-color:var(--accent); }
+    .btn { width:100%; background:var(--accent); color:#000; border:none; border-radius:8px; padding:0.75rem; font-size:1rem; font-weight:700; cursor:pointer; margin-top:0.5rem; }
+    .msg { padding:0.65rem 0.9rem; border-radius:8px; font-size:0.875rem; margin-bottom:1rem; border-left:3px solid var(--accent); background:rgba(0,201,136,0.08); }
+    .volver { display:block; text-align:center; margin-top:1.25rem; color:var(--muted); font-size:0.85rem; text-decoration:none; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1>🔑 Recuperar acceso</h1>
+    <p class="sub">Ingresá el correo asociado a tu cuenta y te enviaremos un código de verificación.</p>
+
+    {% if messages %}
+      {% for msg in messages %}
+      <div class="msg">{{ msg }}</div>
+      {% endfor %}
+    {% endif %}
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="email">Correo electrónico</label>
+        <input type="email" id="email" name="email" required autofocus>
+      </div>
+      <button type="submit" class="btn">Enviar código</button>
+    </form>
+
+    <a href="{% url 'login' %}" class="volver">← Volver a iniciar sesión</a>
+  </div>
+</body>
+</html>

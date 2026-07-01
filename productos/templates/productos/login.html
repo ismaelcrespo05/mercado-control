@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login — VenceYa</title>
+  <title>Login — StockCheck</title>
   
   <!-- i18next CDN -->
   <script src="https://cdn.jsdelivr.net/npm/i18next@23.5.0/i18next.min.js"></script>
@@ -193,8 +193,8 @@
 
 <div class="login-container">
   <div class="login-header">
-    <h1><span>📦</span> VenceYa</h1>
-    <p data-i18n="login.subtitle">Control de vencimientos</p>
+    <h1><span>📦</span> StockCheck</h1>
+    <p data-i18n="login.subtitle">Control de Stock</p>
   </div>
 
   {% if messages %}
@@ -232,6 +232,10 @@
     </div>
 
     <button type="submit" class="btn btn-primary" data-i18n="login.submit">Iniciar sesión</button>
+    <a href="{% url 'solicitar_recuperacion' %}" style="display:block; text-align:center; margin-top:1rem; color:var(--muted); font-size:0.85rem; text-decoration:none;">
+       ¿Olvidaste tu contraseña?
+    </a>
+
   </form>
 </div>
 

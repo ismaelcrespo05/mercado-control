@@ -1,0 +1,207 @@
+{% extends "productos/base.html" %}
+{% block title %}Reportar Avaria — Mercatrol{% endblock %}
+
+{% block content %}
+<h1>Reportar avaria</h1>
+
+<div class="card" style="max-width: 520px;">
+  <form method="post" id="form-avaria">
+    {% csrf_token %}
+
+    <div class="form-group">
+      <label for="codigo_barra">Código de barras</label>
+      <div style="display:flex; gap:0.5rem;">
+        <input
+          type="tel"
+          id="codigo_barra"
+          name="codigo_barra"
+          placeholder="Escaneie ou digite o código"
+          autofocus
+          autocomplete="off"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          required
+          style="flex:1"
+        >
+        <button type="button" class="btn btn-ghost" onclick="abrirCamara()" title="Usar câmera">📷</button>
+      </div>
+      <p id="codigo-error" style="font-size:0.8rem; color:var(--danger); margin-top:0.3rem; display:none;">
+        ⚠️ O código só pode conter números.
+      </p>
+      <p id="buscando-msg" style="font-size:0.8rem; color:var(--text-muted); margin-top:0.3rem; display:none;">
+        🔍 Buscando produto...
+      </p>
+    </div>
+
+    <!-- ESCÁNER DE CÁMARA -->
+    <div id="scanner-container" style="display:none; margin-bottom:1.25rem;">
+      <div id="scanner-viewport" style="position:relative; border-radius:10px; overflow:hidden; background:#000; aspect-ratio:4/3; max-height:300px;">
+        <div style="position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:2;">
+          <div style="position:absolute;left:8%;right:8%;top:48%;height:2px;background:var(--accent);box-shadow:0 0 8px var(--accent);animation:scan 2s linear infinite;"></div>
+          <div style="position:absolute;top:25%;left:8%;width:24px;height:24px;border-top:3px solid var(--accent);border-left:3px solid var(--accent);"></div>
+          <div style="position:absolute;top:25%;right:8%;width:24px;height:24px;border-top:3px solid var(--accent);border-right:3px solid var(--accent);"></div>
+          <div style="position:absolute;bottom:25%;left:8%;width:24px;height:24px;border-bottom:3px solid var(--accent);border-left:3px solid var(--accent);"></div>
+          <div style="position:absolute;bottom:25%;right:8%;width:24px;height:24px;border-bottom:3px solid var(--accent);border-right:3px solid var(--accent);"></div>
+        </div>
+        <p id="scan-status" style="position:absolute;bottom:8px;left:0;right:0;text-align:center;color:#fff;font-size:0.8rem;text-shadow:0 1px 3px #000;font-weight:600;z-index:3;">
+          Aponte para o código de barras
+        </p>
+      </div>
+      <button type="button" class="btn btn-ghost btn-sm" onclick="cerrarCamara()" style="margin-top:0.5rem;width:100%;">
+        ✕ Fechar câmera
+      </button>
+    </div>
+
+    <!-- TARJETA DE PRODUCTO ENCONTRADO -->
+    <div id="producto-encontrado" style="display:none; margin-bottom:1.25rem; padding:1rem; background:var(--surface2); border-radius:10px; border:1px solid var(--accent);">
+      <div style="display:flex; gap:1rem; align-items:center;">
+        <img id="foto-producto" src="" alt="" style="width:56px; height:56px; object-fit:cover; border-radius:8px; background:var(--border); display:none;">
+        <div>
+          <p style="font-size:0.75rem; color:var(--accent); font-weight:700; margin-bottom:0.2rem;">✓ Produto reconhecido</p>
+          <p id="nombre-encontrado" style="font-weight:700;"></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="nombre">Nome do produto</label>
+      <input type="text" id="nombre" name="nombre" placeholder="Ex: Leite Integral 1L" required>
+    </div>
+
+    <div class="form-group">
+      <label for="tipo_danio">Tipo de avaria</label>
+      <select id="tipo_danio" name="tipo_danio" required>
+        <option value="">— Selecione o tipo —</option>
+        {% for valor, etiqueta in tipos %}
+        <option value="{{ valor }}">{{ etiqueta }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="cantidad">Quantidade de unidades com avaria</label>
+      <input type="number" id="cantidad" name="cantidad" value="1" min="1" required>
+    </div>
+
+    <div style="display:flex; gap:0.75rem; margin-top:1.5rem;">
+      <button type="submit" class="btn btn-primary">Reportar avaria</button>
+      <a href="{% url 'listar_avarias' %}" class="btn btn-ghost">Cancelar</a>
+    </div>
+  </form>
+</div>
+
+<style>
+@keyframes scan { 0% { top:20%; } 50% { top:75%; } 100% { top:20%; } }
+#scanner-viewport video, #scanner-viewport canvas {
+  width:100% !important; height:100% !important;
+  object-fit:cover; position:absolute; top:0; left:0;
+}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/quagga@0.12.1/dist/quagga.min.js"></script>
+<script>
+  const codigoInput      = document.getElementById("codigo_barra");
+  const nombreInput      = document.getElementById("nombre");
+  const errorMsg         = document.getElementById("codigo-error");
+  const buscandoMsg      = document.getElementById("buscando-msg");
+  const productoEncontrado = document.getElementById("producto-encontrado");
+  const fotoProducto     = document.getElementById("foto-producto");
+  const nombreEncontrado = document.getElementById("nombre-encontrado");
+  const scanStatus       = document.getElementById("scan-status");
+
+  let debounce;
+  let scannerActivo = false;
+  let lecturas = {};
+  let codigoYaConsultado = "";
+
+  async function consultarCodigo(codigo) {
+    if (!codigo || codigoYaConsultado === codigo) return;
+    codigoYaConsultado = codigo;
+    productoEncontrado.style.display = "none";
+    buscandoMsg.style.display = "block";
+
+    try {
+      const res  = await fetch(`/consultar-codigo/?codigo=${encodeURIComponent(codigo)}`);
+      const data = await res.json();
+      buscandoMsg.style.display = "none";
+
+      if (data.found) {
+        nombreInput.value    = data.nombre;
+        nombreInput.readOnly = true;
+        nombreEncontrado.textContent = data.nombre;
+        if (data.foto) {
+          fotoProducto.src = data.foto;
+          fotoProducto.style.display = "block";
+        }
+        productoEncontrado.style.display = "block";
+      } else {
+        nombreInput.readOnly = false;
+        nombreInput.focus();
+      }
+    } catch (e) {
+      buscandoMsg.style.display = "none";
+    }
+  }
+
+  codigoInput.addEventListener("input", () => {
+    const valor = codigoInput.value;
+    if (!/^[0-9]*$/.test(valor)) {
+      codigoInput.value = valor.replace(/[^0-9]/g, "");
+      errorMsg.style.display = "block";
+      setTimeout(() => errorMsg.style.display = "none", 2000);
+      return;
+    }
+    errorMsg.style.display = "none";
+    productoEncontrado.style.display = "none";
+    codigoYaConsultado = "";
+    nombreInput.value = "";
+    nombreInput.readOnly = false;
+    clearTimeout(debounce);
+    if (!valor) return;
+    debounce = setTimeout(() => consultarCodigo(valor), 500);
+  });
+
+  codigoInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") { e.preventDefault(); clearTimeout(debounce); consultarCodigo(codigoInput.value); }
+  });
+
+  function abrirCamara() {
+    document.getElementById("scanner-container").style.display = "block";
+    scannerActivo = true;
+    lecturas = {};
+
+    Quagga.init({
+      inputStream: {
+        name: "Live", type: "LiveStream",
+        target: document.getElementById("scanner-viewport"),
+        constraints: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } },
+        area: { top: "25%", right: "8%", left: "8%", bottom: "25%" },
+      },
+      locator: { patchSize: "medium", halfSample: true },
+      numOfWorkers: 2, frequency: 10,
+      decoder: { readers: ["ean_reader","ean_8_reader","code_128_reader","upc_reader"], multiple: false },
+      locate: true
+    }, function(err) {
+      if (err) { alert("Não foi possível acessar a câmera."); cerrarCamara(); return; }
+      Quagga.start();
+    });
+
+    Quagga.onDetected(function(result) {
+      const codigo = result.codeResult.code;
+      if (!/^[0-9]+$/.test(codigo)) return;
+      lecturas[codigo] = (lecturas[codigo] || 0) + 1;
+      scanStatus.textContent = `Lendo... (${lecturas[codigo]}/2)`;
+      if (lecturas[codigo] >= 2) {
+        codigoInput.value = codigo;
+        codigoInput.dispatchEvent(new Event("input"));
+        cerrarCamara();
+      }
+    });
+  }
+
+  function cerrarCamara() {
+    if (scannerActivo) { Quagga.stop(); scannerActivo = false; }
+    document.getElementById("scanner-container").style.display = "none";
+  }
+</script>
+{% endblock %}

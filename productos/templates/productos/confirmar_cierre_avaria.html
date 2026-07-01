@@ -1,0 +1,46 @@
+{% extends "productos/base.html" %}
+{% block title %}Fechar Avaria — Mercatrol{% endblock %}
+
+{% block content %}
+<h1>Confirmar fechamento de avaria</h1>
+
+<div class="card" style="max-width:480px; border-color:var(--warn);">
+
+  <div style="margin-bottom:1.5rem; padding-bottom:1.25rem; border-bottom:1px solid var(--border);">
+    <p style="color:var(--text-muted); font-size:0.78rem; text-transform:uppercase; margin-bottom:0.25rem;">Produto</p>
+    <p style="font-weight:700; font-size:1.1rem;">{{ avaria.nombre }}</p>
+    <p style="color:var(--text-muted); font-family:monospace; font-size:0.85rem;">{{ avaria.codigo_barra }}</p>
+  </div>
+
+  <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.5rem;">
+    <div>
+      <p style="color:var(--text-muted); font-size:0.78rem; text-transform:uppercase;">Tipo de avaria</p>
+      <p style="font-weight:600;">{{ avaria.get_tipo_danio_display }}</p>
+    </div>
+    <div>
+      <p style="color:var(--text-muted); font-size:0.78rem; text-transform:uppercase;">Quantidade</p>
+      <p style="font-weight:700; font-size:1.4rem; color:var(--warn);">{{ avaria.cantidad }}</p>
+    </div>
+    <div>
+      <p style="color:var(--text-muted); font-size:0.78rem; text-transform:uppercase;">Reportado por</p>
+      <p style="font-weight:600;">{{ avaria.reportado_por|default:"—" }}</p>
+    </div>
+    <div>
+      <p style="color:var(--text-muted); font-size:0.78rem; text-transform:uppercase;">Data do reporte</p>
+      <p style="font-size:0.875rem;">{{ avaria.fecha_reporte|date:"d/m/Y H:i" }}</p>
+    </div>
+  </div>
+
+  <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:1.5rem;">
+    Ao fechar esta avaria, você confirma que o produto foi dado baixa no sistema externo do mercado. Esta ação não pode ser desfeita.
+  </p>
+
+  <form method="post">
+    {% csrf_token %}
+    <div style="display:flex; gap:0.75rem;">
+      <button type="submit" class="btn btn-primary">Confirmar fechamento</button>
+      <a href="{% url 'listar_avarias' %}" class="btn btn-ghost">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

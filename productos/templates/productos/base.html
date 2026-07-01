@@ -4,8 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}VenceYa{% endblock %}</title>
-  
+  <title>{% block title %}StockCheck{% endblock %}</title>
+
   <!-- i18next CDN -->
   <script src="https://cdn.jsdelivr.net/npm/i18next@23.5.0/i18next.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/i18next-http-backend@2.4.2/i18nextHttpBackend.min.js"></script>
@@ -416,13 +416,13 @@
 
 <nav>
   <div class="nav-left">
-    <a href="{% url 'dashboard' %}" class="nav-brand"><span>📦</span> <span>VenceYa</span></a>
+    <a href="{% url 'dashboard' %}" class="nav-brand"><span>📦</span> <span>StockCheck</span></a>
     <div class="nav-links">
       <a href="{% url 'dashboard' %}" {% if request.resolver_match.url_name == 'dashboard' %}class="active"{% endif %} data-i18n="nav.inicio">Inicio</a>
       <a href="{% url 'configuracion' %}" {% if request.resolver_match.url_name == 'configuracion' %}class="active"{% endif %} data-i18n="nav.config">Configuración</a>
-      <a href="{% url 'listar_danios' %}" {% if request.resolver_match.url_name == 'listar_danios' %}class="active"{% endif %} data-i18n="nav.danios">Daños</a>
       <a href="{% url 'galeria_productos' %}" {% if request.resolver_match.url_name == 'galeria_productos' %}class="active"{% endif %} data-i18n="nav.galeria">🖼️ Galería</a>
       <a href="{% url 'pagina_buscador' %}" {% if request.resolver_match.url_name == 'pagina_buscador' %}class="active"{% endif %}>🔍 Buscar</a>
+      <a href="{% url 'listar_avarias' %}" {% if request.resolver_match.url_name == 'listar_avarias' %}class="active"{% endif %}>🔧 Avarias</a>
     </div>
   </div>
 
@@ -473,9 +473,9 @@
   <div class="mobile-menu" id="mobileMenu">
     <a href="{% url 'dashboard' %}" data-i18n="nav.inicio">Inicio</a>
     <a href="{% url 'configuracion' %}" data-i18n="nav.config">Configuración</a>
-    <a href="{% url 'listar_danios' %}" data-i18n="nav.danios">Daños</a>
     <a href="{% url 'galeria_productos' %}" data-i18n="nav.galeria">🖼️ Galería</a>
     <a href="{% url 'pagina_buscador' %}">🔍 Buscar</a>
+    <a href="{% url 'listar_avarias' %}">🔧 Avarias</a>
     {% if user.is_staff %}
     <a href="{% url 'admin_panel' %}">Panel admin</a>
     {% endif %}
