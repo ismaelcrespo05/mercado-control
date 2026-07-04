@@ -1,6 +1,6 @@
 __pycache__/
 *.py[cod]
-*.pyc.*
+*.pyc.
 
 staticfiles/
 db.sqlite3

@@ -90,7 +90,7 @@
             {% if can_edit %}
             <a href="{% url 'editar' p.pk %}" class="btn btn-sm btn-ghost" data-i18n="buttons.editar">Editar</a>
             {% endif %}
-            <a href="{% url 'reportar_danio' p.pk %}" class="btn btn-sm btn-ghost" data-i18n="buttons.danio">Daño</a>
+            <a href="{% url 'reportar_avaria' %}" class="btn btn-sm btn-ghost">Avaria</a>
             {% if user.is_staff %}
             <form method="post" action="{% url 'eliminar' p.pk %}" onsubmit="return confirm('¿Eliminar {{ p.nombre }}?')">
               {% csrf_token %}
@@ -138,7 +138,7 @@
             {% if can_edit %}
             <a href="{% url 'editar' p.pk %}" class="btn btn-sm btn-ghost" data-i18n="buttons.editar">Editar</a>
             {% endif %}
-            <a href="{% url 'reportar_danio' p.pk %}" class="btn btn-sm btn-ghost" data-i18n="buttons.danio">Daño</a>
+            <a href="{% url 'reportar_avaria' %}" class="btn btn-sm btn-ghost">Avaria</a>
             {% if user.is_staff %}
             <form method="post" action="{% url 'eliminar' p.pk %}" onsubmit="return confirm('¿Eliminar {{ p.nombre }}?')">
               {% csrf_token %}
