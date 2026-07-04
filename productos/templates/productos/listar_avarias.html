@@ -2,21 +2,22 @@
 {% block title %}Avarias — Mercatrol{% endblock %}
 
 {% block content %}
-<div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
-  <div>
-    <h1 style="margin:0;">🔧 Avarias</h1>
+<div class="page-header">
+  <div class="page-title-group">
+    <h1>Avarias</h1>
     {% if total_pendientes > 0 %}
-    <p style="color:var(--warn); font-size:0.875rem; margin-top:0.25rem;">
+    <p class="page-subtitle">
       {{ total_pendientes }} avaria{{ total_pendientes|pluralize }} pendente{{ total_pendientes|pluralize }} de baixa
     </p>
     {% endif %}
   </div>
-  <a href="{% url 'reportar_avaria' %}" class="btn btn-primary">+ Reportar avaria</a>
+  <div class="page-actions">
+    <a href="{% url 'reportar_avaria' %}" class="btn btn-primary">+ Reportar avaria</a>
+  </div>
 </div>
 
-<!-- Filtro de estado -->
-<div class="card" style="margin-bottom:1.5rem; padding:1rem 1.5rem;">
-  <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+<div class="card section">
+  <div class="toolbar">
     <a href="?estado=pendiente" class="btn btn-sm {% if estado_filter == 'pendiente' %}btn-primary{% else %}btn-ghost{% endif %}">
       Pendentes
     </a>
@@ -48,26 +49,23 @@
       {% for a in avarias %}
       <tr>
         <td><strong>{{ a.nombre }}</strong></td>
-        <td style="font-family:monospace; color:var(--text-muted); font-size:0.85rem;">{{ a.codigo_barra }}</td>
+        <td class="code">{{ a.codigo_barra }}</td>
         <td>{{ a.get_tipo_danio_display }}</td>
         <td>{{ a.cantidad }}</td>
-        <td style="color:var(--text-muted);">{{ a.reportado_por|default:"—" }}</td>
-        <td style="color:var(--text-muted); font-size:0.85rem; white-space:nowrap;">{{ a.fecha_reporte|date:"d/m/Y H:i" }}</td>
+        <td class="muted">{{ a.reportado_por|default:"—" }}</td>
+        <td class="muted">{{ a.fecha_reporte|date:"d/m/Y H:i" }}</td>
         <td>
           {% if a.estado == "pendiente" %}
-            <span class="badge badge-warn">⏳ Pendente</span>
+            <span class="badge badge-warn">Pendente</span>
           {% else %}
-            <span class="badge badge-ok">✓ Fechado</span>
+            <span class="badge badge-ok">Fechado</span>
           {% endif %}
         </td>
         <td>
           {% if a.estado == "pendiente" %}
-            {% if not request.user|stringformat:"s" == request.user.groups.filter %}
-            <a href="{% url 'cerrar_avaria' a.pk %}" class="btn btn-sm btn-ghost">Fechar</a>
-            {% endif %}
             <a href="{% url 'cerrar_avaria' a.pk %}" class="btn btn-sm btn-ghost">Fechar</a>
           {% else %}
-            <span style="font-size:0.8rem; color:var(--text-muted);">
+            <span class="muted">
               {{ a.cerrado_por|default:"—" }}<br>
               {{ a.fecha_cierre|date:"d/m/Y H:i" }}
             </span>
@@ -79,9 +77,9 @@
   </table>
 </div>
 {% else %}
-<div class="card" style="text-align:center; padding:3rem;">
-  <p style="font-size:2rem; margin-bottom:1rem;">✅</p>
-  <p style="color:var(--text-muted);">
+<div class="card empty-state">
+  <div class="empty-state-icon">✓</div>
+  <p class="muted">
     {% if estado_filter == "pendiente" %}
       Não há avarias pendentes. Tudo em ordem!
     {% else %}
