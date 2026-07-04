@@ -3,10 +3,15 @@
 {% block title %}Configuración — StockCheck{% endblock %}
 
 {% block content %}
-<h1>Configuración</h1>
+<div class="page-header">
+  <div class="page-title-group">
+    <h1>Configuración</h1>
+    <p class="page-subtitle">Ajusta cuándo quieres ver alertas de vencimiento en el panel.</p>
+  </div>
+</div>
 
-<div class="card" style="max-width: 460px; width: 100%;">
-  <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1.5rem;">
+<div class="card panel-sm">
+  <p class="help-text">
     Define con cuántos días de anticipación quieres recibir la alerta de vencimiento.
     Los productos que vencen dentro de ese plazo aparecerán en amarillo en el panel.
   </p>
@@ -28,7 +33,7 @@
       >
     </div>
 
-    <div class="form-actions" style="margin-bottom:1.25rem;">
+    <div class="form-actions">
       <button type="button" class="btn btn-ghost btn-sm" onclick="setDias(3)">3 días</button>
       <button type="button" class="btn btn-ghost btn-sm" onclick="setDias(7)">7 días</button>
       <button type="button" class="btn btn-ghost btn-sm" onclick="setDias(15)">15 días</button>

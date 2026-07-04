@@ -3,7 +3,15 @@
 {% block title %}Dashboard — StockCheck{% endblock %}
 
 {% block content %}
-<h1 data-i18n="dashboard.title">Panel de control</h1>
+<div class="page-header">
+  <div class="page-title-group">
+    <h1 data-i18n="dashboard.title">Panel de control</h1>
+    <p class="page-subtitle">Estado del inventario por fecha de vencimiento y disponibilidad.</p>
+  </div>
+  <div class="page-actions">
+    <a href="{% url 'escanear' %}" class="btn btn-primary" data-i18n="nav.escanear">+ Escanear</a>
+  </div>
+</div>
 
 <div class="stats-row">
   <div class="stat-card danger">
@@ -20,29 +28,30 @@
   </div>
 </div>
 
-<!-- FILTROS -->
-<div class="card" style="margin-bottom: 1.5rem;">
-  <h2 data-i18n="dashboard.filtros">Filtros</h2>
-  <form method="get" style="margin-bottom: 1rem;">
-  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
-    <div>
+<div class="card section">
+  <div class="section-head">
+    <h2 data-i18n="dashboard.filtros">Filtros</h2>
+  </div>
+  <form method="get">
+  <div class="filter-grid">
+    <div class="form-group">
       <label for="filtro_nombre" data-i18n="forms.nombre">Nombre</label>
       <input type="text" id="filtro_nombre" name="nombre" placeholder="Buscar por nombre..." value="{{ nombre_filter }}" data-i18n-placeholder="placeholders.buscar" />
     </div>
-    <div>
+    <div class="form-group">
       <label for="filtro_codigo" data-i18n="forms.codigo">Código</label>
       <input type="text" id="filtro_codigo" name="codigo" placeholder="Buscar por código..." value="{{ codigo_filter }}" data-i18n-placeholder="placeholders.buscar" />
     </div>
-    <div>
-      <label for="fecha_desde" data-i18n="filters.desde">Desde:</label>
+    <div class="form-group">
+      <label for="fecha_desde" data-i18n="filters.desde">Desde</label>
       <input type="date" id="fecha_desde" name="fecha_desde" value="{{ fecha_desde }}" />
     </div>
-    <div>
-      <label for="fecha_hasta" data-i18n="filters.hasta">Hasta:</label>
+    <div class="form-group">
+      <label for="fecha_hasta" data-i18n="filters.hasta">Hasta</label>
       <input type="date" id="fecha_hasta" name="fecha_hasta" value="{{ fecha_hasta }}" />
     </div>
   </div>
-  <div style="display: flex; gap: 0.5rem;">
+  <div class="form-actions">
     <button type="submit" class="btn btn-primary" data-i18n="dashboard.aplicar">Aplicar</button>
     <a href="{% url 'dashboard' %}" class="btn btn-ghost" data-i18n="dashboard.limpiar">Limpiar</a>
   </div>
@@ -52,7 +61,10 @@
 <!-- VENCIDOS -->
 {% if vencidos %}
 <div class="section">
-  <h2 data-i18n="dashboard.secVencidos">🔴 Vencidos</h2>
+  <div class="section-head">
+    <h2 data-i18n="dashboard.secVencidos">Vencidos</h2>
+    <span class="badge badge-danger">{{ vencidos|length }}</span>
+  </div>
   <div class="table-wrap">
     <table>
       <thead>
@@ -69,7 +81,7 @@
         {% for p in vencidos %}
         <tr>
           <td><strong>{{ p.nombre }}</strong></td>
-          <td style="color:var(--text-muted); font-family:monospace">{{ p.codigo_barra }}</td>
+          <td class="code">{{ p.codigo_barra }}</td>
           <td>{{ p.fecha_vencimiento }}</td>
           <td><span class="badge badge-danger">{{ p.dias_para_vencer|add:"0" }} días</span></td>
           <td>{{ p.cantidad }}</td>
@@ -80,7 +92,7 @@
             {% endif %}
             <a href="{% url 'reportar_danio' p.pk %}" class="btn btn-sm btn-ghost" data-i18n="buttons.danio">Daño</a>
             {% if user.is_staff %}
-            <form method="post" action="{% url 'eliminar' p.pk %}" style="display:inline" onsubmit="return confirm('¿Eliminar {{ p.nombre }}?')">
+            <form method="post" action="{% url 'eliminar' p.pk %}" onsubmit="return confirm('¿Eliminar {{ p.nombre }}?')">
               {% csrf_token %}
               <button class="btn btn-sm btn-danger" data-i18n="buttons.eliminar">Eliminar</button>
             </form>
@@ -97,7 +109,10 @@
 <!-- ALERTA -->
 {% if en_alerta %}
 <div class="section">
-  <h2 data-i18n="dashboard.secAlerta">🟡 Por vencer pronto</h2>
+  <div class="section-head">
+    <h2 data-i18n="dashboard.secAlerta">Por vencer pronto</h2>
+    <span class="badge badge-warn">{{ en_alerta|length }}</span>
+  </div>
   <div class="table-wrap">
     <table>
       <thead>
@@ -114,7 +129,7 @@
         {% for p in en_alerta %}
         <tr>
           <td><strong>{{ p.nombre }}</strong></td>
-          <td style="color:var(--text-muted); font-family:monospace">{{ p.codigo_barra }}</td>
+          <td class="code">{{ p.codigo_barra }}</td>
           <td>{{ p.fecha_vencimiento }}</td>
           <td><span class="badge badge-warn">{{ p.dias_para_vencer }} días</span></td>
           <td>{{ p.cantidad }}</td>
@@ -125,7 +140,7 @@
             {% endif %}
             <a href="{% url 'reportar_danio' p.pk %}" class="btn btn-sm btn-ghost" data-i18n="buttons.danio">Daño</a>
             {% if user.is_staff %}
-            <form method="post" action="{% url 'eliminar' p.pk %}" style="display:inline" onsubmit="return confirm('¿Eliminar {{ p.nombre }}?')">
+            <form method="post" action="{% url 'eliminar' p.pk %}" onsubmit="return confirm('¿Eliminar {{ p.nombre }}?')">
               {% csrf_token %}
               <button class="btn btn-sm btn-danger" data-i18n="buttons.eliminar">Eliminar</button>
             </form>
@@ -142,7 +157,10 @@
 <!-- OK -->
 {% if ok %}
 <div class="section">
-  <h2 data-i18n="dashboard.secOk">🟢 En buen estado</h2>
+  <div class="section-head">
+    <h2 data-i18n="dashboard.secOk">En buen estado</h2>
+    <span class="badge badge-ok">{{ ok|length }}</span>
+  </div>
   <div class="table-wrap">
     <table>
       <thead>
@@ -159,7 +177,7 @@
         {% for p in ok %}
         <tr>
           <td><strong>{{ p.nombre }}</strong></td>
-          <td style="color:var(--text-muted); font-family:monospace">{{ p.codigo_barra }}</td>
+          <td class="code">{{ p.codigo_barra }}</td>
           <td>{{ p.fecha_vencimiento }}</td>
           <td><span class="badge badge-ok">{{ p.dias_para_vencer }} días</span></td>
           <td>{{ p.cantidad }}</td>
@@ -169,7 +187,7 @@
             <a href="{% url 'editar' p.pk %}" class="btn btn-sm btn-ghost" data-i18n="buttons.editar">Editar</a>
             {% endif %}
             {% if user.is_staff %}
-            <form method="post" action="{% url 'eliminar' p.pk %}" style="display:inline" onsubmit="return confirm('¿Eliminar {{ p.nombre }}?')">
+            <form method="post" action="{% url 'eliminar' p.pk %}" onsubmit="return confirm('¿Eliminar {{ p.nombre }}?')">
               {% csrf_token %}
               <button class="btn btn-sm btn-danger" data-i18n="buttons.eliminar">Eliminar</button>
             </form>
@@ -184,9 +202,9 @@
 {% endif %}
 
 {% if not vencidos and not en_alerta and not ok %}
-<div class="card" style="text-align:center; padding: 3rem;">
-  <p style="font-size: 2rem; margin-bottom: 1rem;">📭</p>
-  <p style="color: var(--text-muted); margin-bottom: 1.5rem;" data-i18n="dashboard.empty">No hay productos registrados aún.</p>
+<div class="card empty-state">
+  <div class="empty-state-icon">□</div>
+  <p class="muted" data-i18n="dashboard.empty">No hay productos registrados aún.</p>
   <a href="{% url 'escanear' %}" class="btn btn-primary" data-i18n="dashboard.scanFirst">Escanear primer producto</a>
 </div>
 {% endif %}
