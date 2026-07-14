@@ -102,7 +102,7 @@ class CodigoRecuperacion(models.Model):
     """
     Guarda un código temporal de 7 dígitos para que un usuario
     pueda recuperar su contraseña por email. Cada código vence
-    a los 10 minutos de haberse creado, por seguridad.
+    a los 5 minutos de haberse creado, por seguridad.
     """
     usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     codigo = models.CharField(max_length=7)
@@ -151,8 +151,8 @@ class CodigoRecuperacion(models.Model):
 
     @property
     def expirado(self):
-        """True si pasaron más de 1 minutos desde que se generó."""
-        limite = self.creado + timedelta(minutes=1)
+        """True si pasaron más de 5 minutos desde que se generó."""
+        limite = self.creado + timedelta(minutes=5)
         return tz.now() > limite
 
     @property

@@ -79,14 +79,24 @@
       </thead>
       <tbody>
         {% for p in vencidos %}
-        <tr>
+        <tr class="producto-row" onclick="abrirModal(this)"
+            data-nombre="{{ p.nombre }}"
+            data-codigo="{{ p.codigo_barra }}"
+            data-fecha="{{ p.fecha_vencimiento }}"
+            data-dias="{{ p.dias_para_vencer }}"
+            data-cantidad="{{ p.cantidad }}"
+            data-estado="{{ p.estado }}"
+            data-foto=""
+            data-pk="{{ p.pk }}"
+            data-can-edit="{% if can_edit %}1{% else %}0{% endif %}"
+            data-is-staff="{% if user.is_staff %}1{% else %}0{% endif %}">
           <td><strong>{{ p.nombre }}</strong></td>
           <td class="code">{{ p.codigo_barra }}</td>
           <td>{{ p.fecha_vencimiento }}</td>
           <td><span class="badge badge-danger">{{ p.dias_para_vencer|add:"0" }} días</span></td>
           <td>{{ p.cantidad }}</td>
           <td>
-            <a href="{% url 'vender' p.pk %}" class="btn btn-sm btn-ghost" data-i18n="buttons.venta">Venta</a>
+    
             {% if can_edit %}
             <a href="{% url 'editar' p.pk %}" class="btn btn-sm btn-ghost" data-i18n="buttons.editar">Editar</a>
             {% endif %}
@@ -127,14 +137,24 @@
       </thead>
       <tbody>
         {% for p in en_alerta %}
-        <tr>
+        <tr class="producto-row" onclick="abrirModal(this)"
+            data-nombre="{{ p.nombre }}"
+            data-codigo="{{ p.codigo_barra }}"
+            data-fecha="{{ p.fecha_vencimiento }}"
+            data-dias="{{ p.dias_para_vencer }}"
+            data-cantidad="{{ p.cantidad }}"
+            data-estado="{{ p.estado }}"
+            data-foto=""
+            data-pk="{{ p.pk }}"
+            data-can-edit="{% if can_edit %}1{% else %}0{% endif %}"
+            data-is-staff="{% if user.is_staff %}1{% else %}0{% endif %}">
           <td><strong>{{ p.nombre }}</strong></td>
           <td class="code">{{ p.codigo_barra }}</td>
           <td>{{ p.fecha_vencimiento }}</td>
           <td><span class="badge badge-warn">{{ p.dias_para_vencer }} días</span></td>
           <td>{{ p.cantidad }}</td>
           <td>
-            <a href="{% url 'vender' p.pk %}" class="btn btn-sm btn-ghost" data-i18n="buttons.venta">Venta</a>
+            
             {% if can_edit %}
             <a href="{% url 'editar' p.pk %}" class="btn btn-sm btn-ghost" data-i18n="buttons.editar">Editar</a>
             {% endif %}
@@ -175,14 +195,24 @@
       </thead>
       <tbody>
         {% for p in ok %}
-        <tr>
+        <tr class="producto-row" onclick="abrirModal(this)"
+            data-nombre="{{ p.nombre }}"
+            data-codigo="{{ p.codigo_barra }}"
+            data-fecha="{{ p.fecha_vencimiento }}"
+            data-dias="{{ p.dias_para_vencer }}"
+            data-cantidad="{{ p.cantidad }}"
+            data-estado="{{ p.estado }}"
+            data-foto=""
+            data-pk="{{ p.pk }}"
+            data-can-edit="{% if can_edit %}1{% else %}0{% endif %}"
+            data-is-staff="{% if user.is_staff %}1{% else %}0{% endif %}">
           <td><strong>{{ p.nombre }}</strong></td>
           <td class="code">{{ p.codigo_barra }}</td>
           <td>{{ p.fecha_vencimiento }}</td>
           <td><span class="badge badge-ok">{{ p.dias_para_vencer }} días</span></td>
           <td>{{ p.cantidad }}</td>
           <td>
-            <a href="{% url 'vender' p.pk %}" class="btn btn-sm btn-ghost" data-i18n="buttons.venta">Venta</a>
+           
             {% if can_edit %}
             <a href="{% url 'editar' p.pk %}" class="btn btn-sm btn-ghost" data-i18n="buttons.editar">Editar</a>
             {% endif %}
@@ -208,5 +238,154 @@
   <a href="{% url 'escanear' %}" class="btn btn-primary" data-i18n="dashboard.scanFirst">Escanear primer producto</a>
 </div>
 {% endif %}
+<div class="modal-overlay" id="modalOverlay" onclick="cerrarModalSiOverlay(event)">
+  <div class="modal-box" id="modalBox">
+    <button class="modal-close" onclick="cerrarModal()">✕</button>
+
+    <!-- Foto o placeholder -->
+    <div id="modalFotoContainer">
+      <div class="modal-foto-placeholder" id="modalPlaceholder">📦</div>
+      <img class="modal-foto" id="modalFoto" src="" alt="" style="display:none;" onload="mostrarFoto()" onerror="ocultarFoto()">
+    </div>
+
+    <div class="modal-body">
+      <p class="modal-nombre" id="modalNombre"></p>
+      <p class="modal-codigo" id="modalCodigo"></p>
+
+      <div class="modal-grid">
+        <div class="modal-field">
+          <p>Vence</p>
+          <p id="modalFecha"></p>
+        </div>
+        <div class="modal-field">
+          <p>Días</p>
+          <p id="modalDias"></p>
+        </div>
+        <div class="modal-field">
+          <p>Cantidad</p>
+          <p id="modalCantidad" style="font-size:1.3rem; color:var(--accent);"></p>
+        </div>
+        <div class="modal-field">
+          <p>Estado</p>
+          <p id="modalEstado"></p>
+        </div>
+      </div>
+
+      <div class="modal-actions" id="modalActions"></div>
+    </div>
+  </div>
+</div>
+<script>
+let pkActual = null;
+
+function abrirModal(fila) {
+  const d = fila.dataset;
+  pkActual = d.pk;
+
+  // Nombre y código
+  document.getElementById("modalNombre").textContent   = d.nombre;
+  document.getElementById("modalCodigo").textContent   = d.codigo;
+  document.getElementById("modalFecha").textContent    = d.fecha;
+
+  // Días con color según estado
+  const diasEl = document.getElementById("modalDias");
+  const dias = parseInt(d.dias);
+  diasEl.textContent = dias < 0 ? `${Math.abs(dias)} días vencido` : `${dias} días`;
+  diasEl.style.color = dias < 0 ? "var(--danger)" : dias <= 7 ? "var(--warn)" : "var(--ok)";
+
+  document.getElementById("modalCantidad").textContent = d.cantidad + " un.";
+
+  // Estado con badge
+  const estadoEl = document.getElementById("modalEstado");
+  if (d.estado === "vencido") {
+    estadoEl.innerHTML = '<span class="badge badge-danger">Vencido</span>';
+  } else if (d.estado === "alerta") {
+    estadoEl.innerHTML = '<span class="badge badge-warn">Por vencer</span>';
+  } else {
+    estadoEl.innerHTML = '<span class="badge badge-ok">Buen estado</span>';
+  }
+
+  // Foto
+  const foto = document.getElementById("modalFoto");
+  const placeholder = document.getElementById("modalPlaceholder");
+  if (d.foto && d.foto !== "") {
+    foto.src = d.foto;
+    foto.style.display = "block";
+    placeholder.style.display = "none";
+  } else {
+    // Intentamos cargar la foto desde el catálogo vía AJAX
+    cargarFotoDesdeServidor(d.codigo);
+    foto.style.display = "none";
+    placeholder.style.display = "flex";
+  }
+
+  // Botones de acción
+  const acciones = document.getElementById("modalActions");
+  let botonesHTML = `
+   
+    <a href="/avarias/reportar/" class="btn btn-ghost btn-sm">🔧 Avaria</a>
+  `;
+  if (d.canEdit === "1") {
+    botonesHTML += `<a href="/editar/${d.pk}/" class="btn btn-ghost btn-sm">✏️ Editar</a>`;
+  }
+  if (d.isStaff === "1") {
+    botonesHTML += `
+      <form method="post" action="/eliminar/${d.pk}/" style="display:inline"
+            onsubmit="return confirm('¿Eliminar ${d.nombre}?')">
+        <input type="hidden" name="csrfmiddlewaretoken" value="${getCookie('csrftoken')}">
+        <button type="submit" class="btn btn-danger btn-sm">🗑 Eliminar</button>
+      </form>
+    `;
+  }
+  acciones.innerHTML = botonesHTML;
+
+  // Abrir el overlay
+  document.getElementById("modalOverlay").classList.add("active");
+  document.body.style.overflow = "hidden"; // evita scroll detrás del modal
+}
+
+async function cargarFotoDesdeServidor(codigo) {
+  try {
+    const res  = await fetch(`/consultar-codigo/?codigo=${encodeURIComponent(codigo)}`);
+    const data = await res.json();
+    if (data.found && data.foto) {
+      const foto = document.getElementById("modalFoto");
+      foto.src = data.foto;
+      foto.style.display = "block";
+      document.getElementById("modalPlaceholder").style.display = "none";
+    }
+  } catch (e) { /* si falla, el placeholder se queda */ }
+}
+
+function mostrarFoto() {
+  document.getElementById("modalFoto").style.display = "block";
+  document.getElementById("modalPlaceholder").style.display = "none";
+}
+
+function ocultarFoto() {
+  document.getElementById("modalFoto").style.display = "none";
+  document.getElementById("modalPlaceholder").style.display = "flex";
+}
+
+function cerrarModal() {
+  document.getElementById("modalOverlay").classList.remove("active");
+  document.body.style.overflow = "";
+}
+
+function cerrarModalSiOverlay(e) {
+  if (e.target === document.getElementById("modalOverlay")) cerrarModal();
+}
+
+// Cerrar con Escape
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") cerrarModal();
+});
+
+function getCookie(name) {
+  const v = `; ${document.cookie}`;
+  const p = v.split(`; ${name}=`);
+  if (p.length === 2) return p.pop().split(";").shift();
+}
+</script>
 
 {% endblock %}

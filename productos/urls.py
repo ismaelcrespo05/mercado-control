@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views
+from . import views # el . hace que importe views.py que estan en esta misma carpeta
 
 urlpatterns = [
     path("", views.dashboard, name="dashboard"),
@@ -13,12 +13,11 @@ urlpatterns = [
     path("buscar-codigo/", views.buscar_codigo, name="buscar_codigo"),
     path("buscar-productos/", views.buscar_productos, name="buscar_productos"),
     path("editar/<int:pk>/", views.editar_producto, name="editar"),
-    path("vender/<int:pk>/", views.vender, name="vender"),
+
     path("eliminar/<int:pk>/", views.eliminar, name="eliminar"),
     path("configuracion/", views.configuracion, name="configuracion"),
     path("consultar-codigo/",     views.consultar_codigo,      name="consultar_codigo"),
     path("guardar-ficha-manual/", views.guardar_ficha_manual,  name="guardar_ficha_manual"),
-    path("galeria/",              views.galeria_productos,     name="galeria_productos"),
     path("buscar-por-nombre/",   views.buscar_por_nombre,    name="buscar_por_nombre"),
     path("importar-externa/",    views.importar_de_externa,  name="importar_de_externa"),
     path("buscador/",            views.pagina_buscador,      name="pagina_buscador"),
