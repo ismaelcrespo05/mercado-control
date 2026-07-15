@@ -1,4 +1,4 @@
-{% load static %}
+{% load static group_tags %}
 <!DOCTYPE html>
 <html lang="es" data-theme="dark">
 <head>
@@ -974,6 +974,140 @@
       }
     }
   </style>
+  <style id="modal-css">
+/* Overlay oscuro detrás del modal */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 500;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  backdrop-filter: blur(2px);
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+/* Caja del modal */
+.modal-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 420px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  animation: modalEntrar 0.2s ease;
+}
+
+@keyframes modalEntrar {
+  from { transform: translateY(20px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+/* Botón cerrar */
+.modal-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  z-index: 10;
+}
+
+.modal-close:hover { color: var(--text); border-color: var(--accent); }
+
+/* Foto del producto */
+.modal-foto {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 16px 16px 0 0;
+  background: var(--surface2);
+  display: block;
+}
+
+.modal-foto-placeholder {
+  width: 100%;
+  height: 160px;
+  background: var(--surface2);
+  border-radius: 16px 16px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  color: var(--text-muted);
+}
+
+/* Contenido del modal */
+.modal-body {
+  padding: 1.25rem 1.5rem 1.5rem;
+}
+
+.modal-nombre {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  padding-right: 2rem; /* espacio para el botón X */
+}
+
+.modal-codigo {
+  font-family: monospace;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 1.25rem;
+}
+
+.modal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.modal-field p:first-child {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.2rem;
+}
+
+.modal-field p:last-child {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* Las filas de la tabla se vuelven clicables */
+.producto-row {
+  cursor: pointer;
+}
+
+.producto-row:hover td {
+  background: var(--surface2);
+}
+</style>
 </head>
 <body>
 
@@ -983,7 +1117,6 @@
     <div class="nav-links">
       <a href="{% url 'dashboard' %}" {% if request.resolver_match.url_name == 'dashboard' %}class="active"{% endif %} data-i18n="nav.inicio">Inicio</a>
       <a href="{% url 'configuracion' %}" {% if request.resolver_match.url_name == 'configuracion' %}class="active"{% endif %} data-i18n="nav.config">Configuración</a>
-      <a href="{% url 'galeria_productos' %}" {% if request.resolver_match.url_name == 'galeria_productos' %}class="active"{% endif %} data-i18n="nav.galeria">🖼️ Galería</a>
       <a href="{% url 'pagina_buscador' %}" {% if request.resolver_match.url_name == 'pagina_buscador' %}class="active"{% endif %}>🔍 Buscar</a>
       <a href="{% url 'listar_avarias' %}" {% if request.resolver_match.url_name == 'listar_avarias' %}class="active"{% endif %}>🔧 Avarias</a>
     </div>
@@ -1022,7 +1155,7 @@
         <span>▼</span>
       </button>
       <div class="dropdown-menu" id="userMenu">
-        {% if user.is_staff %}
+        {% if user.is_superuser or user|has_group:'admin_especial' or user|has_group:'administrador' %}
         <a href="{% url 'admin_panel' %}" style="display: block;">Panel admin</a>
         {% endif %}
         <a href="{% url 'logout' %}" data-i18n="nav.logout">🚪 Logout</a>
@@ -1038,7 +1171,6 @@
   <div class="mobile-menu" id="mobileMenu">
     <a href="{% url 'dashboard' %}" data-i18n="nav.inicio">Inicio</a>
     <a href="{% url 'configuracion' %}" data-i18n="nav.config">Configuración</a>
-    <a href="{% url 'galeria_productos' %}" data-i18n="nav.galeria">🖼️ Galería</a>
     <a href="{% url 'pagina_buscador' %}">🔍 Buscar</a>
     <a href="{% url 'listar_avarias' %}">🔧 Avarias</a>
     <hr>
@@ -1058,7 +1190,7 @@
     <hr>
     {% if user.is_authenticated %}
     <div class="mobile-menu-user">👤 {{ user.first_name|default:user.username }}</div>
-    {% if user.is_staff %}
+    {% if user.is_superuser or user|has_group:'admin_especial' or user|has_group:'administrador' %}
     <a href="{% url 'admin_panel' %}">Panel admin</a>
     {% endif %}
     <a href="{% url 'logout' %}" data-i18n="nav.logout">Cerrar sesión</a>

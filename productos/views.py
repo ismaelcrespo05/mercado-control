@@ -213,8 +213,13 @@ def admin_usuario_form(request, pk=None):
         messages.info(request, "Ese usuario ya no existe o fue eliminado.")
         return redirect("admin_panel")
 
+    if usuario and es_super_admin(usuario) and not es_super_admin(request.user):
+        messages.error(request, "No tenés permiso para editar al Super Admin.")
+        return redirect("admin_panel")
+
     es_edicion = usuario is not None
     rol_actual = rol_usuario(usuario)[0] if usuario else "trabajador"
+    rol_actual_nombre = rol_usuario(usuario)[1] if usuario else "Trabajador"
 
     # Roles que ESTA persona logueada puede asignar
     roles_disponibles = roles_que_puede_asignar(request.user)
@@ -226,15 +231,30 @@ def admin_usuario_form(request, pk=None):
         email = request.POST.get("email", "").strip()
         rol = request.POST.get("rol", "trabajador").strip()
         is_active = request.POST.get("is_active", "1") == "1"
+
+        if usuario and usuario == request.user and not is_active:
+            messages.error(request, "No podés desactivarte a vos mismo.")
+            return redirect("admin_usuario_form", pk=usuario.pk)
+        
+        if usuario and usuario == request.user and rol != rol_actual:
+            messages.error(request, "No puedes cambiar tu propio rol.")
+            return redirect("admin_usuario_form", pk=usuario.pk)
+        
+        # El Super Admin nunca puede quedar inactivo.
+        if es_super_admin(usuario):
+            usuario.is_active = True
+        else:
+            usuario.is_active = is_active    
         password = request.POST.get("password", "")
         password_confirm = request.POST.get("password_confirm", "")
 
         # Verificación de seguridad real: el rol pedido tiene que estar
         # entre los que esta persona puede asignar, sin importar lo
         # que muestre el HTML del formulario
-        if rol not in roles_disponibles:
-            messages.error(request, "No tenés permiso para asignar ese rol.")
-            return redirect("admin_panel")
+        if not (usuario and es_super_admin(usuario)):
+            if rol not in roles_disponibles:
+             messages.error(request, "No tenés permiso para asignar ese rol.")
+             return redirect("admin_panel")
 
         if not username:
             messages.error(request, "El usuario es obligatorio.")
@@ -255,7 +275,8 @@ def admin_usuario_form(request, pk=None):
             usuario.is_active = is_active
             usuario.save()  # primero guardamos para tener un pk antes de tocar grupos
 
-            aplicar_rol(usuario, rol)
+            if not es_super_admin(usuario):
+                aplicar_rol(usuario, rol)
 
             if password:
                 usuario.set_password(password)
@@ -271,6 +292,7 @@ def admin_usuario_form(request, pk=None):
         "es_edicion": es_edicion,
         "roles": [(r, ROLES_GESTIONABLES[r]) for r in roles_disponibles],
         "rol_actual": rol_actual,
+        "rol_actual_nombre": rol_actual_nombre,
     })
     
 @login_required(login_url='login')
@@ -486,38 +508,6 @@ def editar_producto(request, pk):
     return render(request, "productos/editar_producto.html", {"producto": producto})
 
 
-@login_required(login_url='login')
-def vender(request, pk):
-    producto = Producto.objects.filter(pk=pk).first()
-    if producto is None:
-        messages.info(request, "Ese producto ya no existe o fue eliminado.")
-        return redirect("dashboard")
-    
-    if request.method == "POST":
-        try:
-            cantidad_venta = int(request.POST.get("cantidad", 1))
-            if cantidad_venta <= 0:
-                messages.error(request, "La cantidad debe ser mayor a 0.")
-                return render(request, "productos/vender.html", {"producto": producto})
-        except ValueError:
-            messages.error(request, "Cantidad inválida. Debe ser un número entero.")
-            return render(request, "productos/vender.html", {"producto": producto})
-        
-        # Validar que no se venda más de lo que hay.
-        if cantidad_venta <= producto.cantidad:
-            if cantidad_venta == producto.cantidad:
-                producto.delete()
-                messages.info(request, "Producto agotado y eliminado del stock.")
-            else:
-                producto.cantidad -= cantidad_venta
-                producto.save()
-                messages.success(request, f"Venta registrada. Quedan {producto.cantidad} unidades.")
-        else:
-            messages.error(request, f"Stock insuficiente. Disponibles: {producto.cantidad} unidades.")
-            return render(request, "productos/vender.html", {"producto": producto})
-        
-        return redirect("dashboard")
-    return render(request, "productos/vender.html", {"producto": producto})
 
 
 @login_required(login_url='login')
@@ -637,33 +627,6 @@ def guardar_ficha_manual(request):
         "nombre": ficha.nombre,
         "foto": ficha.foto or "",
     })
-    
-@login_required(login_url='login')
-def galeria_productos(request):
-    """
-    Muestra todas las fichas del catálogo (CatalogoProducto) con su foto,
-    sin importar el stock actual. Es la "biblioteca visual" de todo lo
-    que el mercado ha registrado alguna vez.
-    """
-    busqueda = request.GET.get("q", "").strip()
-
-    fichas = CatalogoProducto.objects.all().order_by("nombre")
-
-    if busqueda:
-        fichas = fichas.filter(nombre__icontains=busqueda)
-
-    # Separamos las que tienen foto de las que no, para mostrar
-    # primero las que sí tienen imagen (más útil visualmente)
-    con_foto = [f for f in fichas if f.foto]
-    sin_foto = [f for f in fichas if not f.foto]
-
-    return render(request, "productos/galeria.html", {
-        "con_foto": con_foto,
-        "sin_foto": sin_foto,
-        "busqueda": busqueda,
-        "total": fichas.count(),
-    })
-
 
 @login_required(login_url='login')
 def buscar_por_nombre(request):
@@ -757,7 +720,7 @@ def cambiar_password(request):
     """
     Cualquier usuario logueado puede cambiar su propia contraseña
     desde acá, sin necesidad de ningún código por email — esto es
-    distinto a "recuperar" (que es para cuando NO podés entrar).
+    distinto a "recuperar" (que es para cuando NO podas entrar).
     """
     if request.method == "POST":
         actual = request.POST.get("password_actual", "")
@@ -807,12 +770,12 @@ def solicitar_recuperacion(request):
             codigo_obj = CodigoRecuperacion.generar_para(usuario)
 
             send_mail(
-                subject="Código de recuperación — Mercatrol",
+                subject="Código de recuperación — StockCheck",
                 message=(
                     f"Hola {usuario.first_name or usuario.username},\n\n"
                     f"Tu código de recuperación es: {codigo_obj.codigo}\n\n"
-                    f"Este código vence en 1 minuto. Si no solicitaste "
-                    f"este cambio, podés ignorar este correo."
+                    f"Este código vence en 5 minutos. Si no solicitaste "
+                    f"este cambio, puedes ignorar este correo."
                 ),
                 from_email=None,  # usa el DEFAULT_FROM_EMAIL de settings.py
                 recipient_list=[usuario.email],

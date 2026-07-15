@@ -6,7 +6,7 @@
 <h1>{% if es_edicion %}Editar usuario{% else %}Nuevo usuario{% endif %}</h1>
 
 <div class="card" style="max-width:640px; width:100%; margin:0 auto;">
-  <form method="post">
+  <form method="post" autocomplete="off">
     {% csrf_token %}
 
     <div class="grid-2col">
@@ -58,19 +58,32 @@
     <div class="grid-2col">
       <div class="form-group">
         <label for="rol">Rol</label>
+        {% if usuario_obj.is_superuser %}
+          <input type="text" class="form-control" value="Super Admin" readonly>
+          <input type="hidden" name="rol" value="super_admin">
+        {% elif usuario_obj == user %}
+          <input type="text" class="form-control" value="{{ rol_actual_nombre }}" readonly>
+          <input type="hidden" name="rol" value="{{ rol_actual }}">
+        {% else %}
         <select id="rol" name="rol" required>
           {% for codigo, nombre in roles %}
           <option value="{{ codigo }}" {% if rol_actual == codigo %}selected{% endif %}>{{ nombre }}</option>
           {% endfor %}
         </select>
+        {% endif %}
       </div>
 
       <div class="form-group">
         <label for="is_active">Estado</label>
+        {% if usuario_obj.is_superuser or usuario_obj == user %}
+          <input type="text" class="form-control" value="Activo (No puedes desactivarte)" readonly>
+          <input type="hidden" name="is_active" value="1">
+        {% else %}
         <select id="is_active" name="is_active" required>
           <option value="1" {% if not es_edicion or usuario_obj.is_active %}selected{% endif %}>Activo</option>
           <option value="0" {% if es_edicion and not usuario_obj.is_active %}selected{% endif %}>Inactivo</option>
         </select>
+        {% endif %}
       </div>
     </div>
 
@@ -81,6 +94,7 @@
           type="password"
           id="password"
           name="password"
+          autocomplete="new-password"
           {% if not es_edicion %}required{% endif %}
         >
       </div>
@@ -91,6 +105,7 @@
           type="password"
           id="password_confirm"
           name="password_confirm"
+          autocomplete="new-password"
           {% if not es_edicion %}required{% endif %}
         >
       </div>
