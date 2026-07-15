@@ -24,6 +24,7 @@
           required
           style="flex:1"
         >
+        <button type="button" class="btn btn-primary" id="btnBuscar" onclick="buscarManual()" title="Buscar producto" style="display:none;">🔍</button>
         <button type="button" class="btn btn-ghost" id="btnCamara" onclick="abrirCamara()" title="Usar cámara">📷</button>
       </div>
       <p id="codigo-error" style="font-size:0.8rem; color:var(--danger); margin-top:0.3rem; display:none;">
@@ -114,6 +115,7 @@
 
 <script>
   const codigoInput        = document.getElementById("codigo_barra");
+  const btnBuscar          = document.getElementById("btnBuscar");
   const nombreInput        = document.getElementById("nombre");
   const errorMsg           = document.getElementById("codigo-error");
   const buscandoMsg        = document.getElementById("buscando-msg");
@@ -175,6 +177,14 @@
     }
   }
 
+  function buscarManual() {
+    const codigo = codigoInput.value.trim();
+    if (codigo) {
+      clearTimeout(debounce);
+      consultarCodigo(codigo);
+    }
+  }
+
   codigoInput.addEventListener("input", () => {
     const valor = codigoInput.value;
     if (!/^[0-9]*$/.test(valor)) {
@@ -184,11 +194,14 @@
       return;
     }
     errorMsg.style.display = "none";
-    resetearEstadoProducto();
-    codigoYaConsultado = "";
-    clearTimeout(debounce);
-    if (!valor) return;
-    debounce = setTimeout(() => consultarCodigo(valor), 500);
+    
+    // Mostrar/ocultar botón de búsqueda
+    btnBuscar.style.display = valor ? "block" : "none";
+    
+    if (!valor) {
+      resetearEstadoProducto();
+      codigoYaConsultado = "";
+    }
   });
 
   codigoInput.addEventListener("keydown", (e) => {
