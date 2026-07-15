@@ -61,6 +61,9 @@
         {% if usuario_obj.is_superuser %}
           <input type="text" class="form-control" value="Super Admin" readonly>
           <input type="hidden" name="rol" value="super_admin">
+        {% elif usuario_obj == user %}
+          <input type="text" class="form-control" value="{{ rol_actual_nombre }}" readonly>
+          <input type="hidden" name="rol" value="{{ rol_actual }}">
         {% else %}
         <select id="rol" name="rol" required>
           {% for codigo, nombre in roles %}
@@ -72,8 +75,8 @@
 
       <div class="form-group">
         <label for="is_active">Estado</label>
-        {% if usuario_obj.is_superuser %}
-          <input type="text" class="form-control" value="Activo (Super Admin)" readonly>
+        {% if usuario_obj.is_superuser or usuario_obj == user %}
+          <input type="text" class="form-control" value="Activo (No puedes desactivarte)" readonly>
           <input type="hidden" name="is_active" value="1">
         {% else %}
         <select id="is_active" name="is_active" required>

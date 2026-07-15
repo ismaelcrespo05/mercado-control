@@ -1,4 +1,4 @@
-{% load static %}
+{% load static group_tags %}
 <!DOCTYPE html>
 <html lang="es" data-theme="dark">
 <head>
@@ -1155,7 +1155,7 @@
         <span>▼</span>
       </button>
       <div class="dropdown-menu" id="userMenu">
-        {% if user.is_staff %}
+        {% if user.is_superuser or user|has_group:'admin_especial' or user|has_group:'administrador' %}
         <a href="{% url 'admin_panel' %}" style="display: block;">Panel admin</a>
         {% endif %}
         <a href="{% url 'logout' %}" data-i18n="nav.logout">🚪 Logout</a>
@@ -1190,7 +1190,7 @@
     <hr>
     {% if user.is_authenticated %}
     <div class="mobile-menu-user">👤 {{ user.first_name|default:user.username }}</div>
-    {% if user.is_staff %}
+    {% if user.is_superuser or user|has_group:'admin_especial' or user|has_group:'administrador' %}
     <a href="{% url 'admin_panel' %}">Panel admin</a>
     {% endif %}
     <a href="{% url 'logout' %}" data-i18n="nav.logout">Cerrar sesión</a>

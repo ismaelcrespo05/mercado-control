@@ -213,8 +213,13 @@ def admin_usuario_form(request, pk=None):
         messages.info(request, "Ese usuario ya no existe o fue eliminado.")
         return redirect("admin_panel")
 
+    if usuario and es_super_admin(usuario) and not es_super_admin(request.user):
+        messages.error(request, "No tenés permiso para editar al Super Admin.")
+        return redirect("admin_panel")
+
     es_edicion = usuario is not None
     rol_actual = rol_usuario(usuario)[0] if usuario else "trabajador"
+    rol_actual_nombre = rol_usuario(usuario)[1] if usuario else "Trabajador"
 
     # Roles que ESTA persona logueada puede asignar
     roles_disponibles = roles_que_puede_asignar(request.user)
@@ -226,9 +231,17 @@ def admin_usuario_form(request, pk=None):
         email = request.POST.get("email", "").strip()
         rol = request.POST.get("rol", "trabajador").strip()
         is_active = request.POST.get("is_active", "1") == "1"
+
+        if usuario and usuario == request.user and not is_active:
+            messages.error(request, "No podés desactivarte a vos mismo.")
+            return redirect("admin_usuario_form", pk=usuario.pk)
         
-        #el super_admin no puede quedar inactivo.
-        if  es_super_admin(usuario):
+        if usuario and usuario == request.user and rol != rol_actual:
+            messages.error(request, "No puedes cambiar tu propio rol.")
+            return redirect("admin_usuario_form", pk=usuario.pk)
+        
+        # El Super Admin nunca puede quedar inactivo.
+        if es_super_admin(usuario):
             usuario.is_active = True
         else:
             usuario.is_active = is_active    
@@ -279,6 +292,7 @@ def admin_usuario_form(request, pk=None):
         "es_edicion": es_edicion,
         "roles": [(r, ROLES_GESTIONABLES[r]) for r in roles_disponibles],
         "rol_actual": rol_actual,
+        "rol_actual_nombre": rol_actual_nombre,
     })
     
 @login_required(login_url='login')

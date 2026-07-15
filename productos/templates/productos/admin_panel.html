@@ -70,8 +70,10 @@
           </td>
           <td>{{ item.usuario.last_login|date:"d/m/Y H:i"|default:"-" }}</td>
           <td>
+            {% if not item.usuario.is_superuser or user.is_superuser %}
             <a href="{% url 'admin_usuario_editar' item.usuario.pk %}" class="btn btn-sm btn-ghost">Editar</a>
-            {% if item.usuario != user %}
+            {% endif %}
+            {% if item.usuario != user and not item.usuario.is_superuser %}
             <form method="post" action="{% url 'admin_usuario_eliminar' item.usuario.pk %}" onsubmit="return confirm('¿Eliminar usuario {{ item.usuario.username }}?')">
               {% csrf_token %}
               <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
