@@ -23,17 +23,17 @@ ROLES_GESTIONABLES = {
 
 def es_super_admin(user):
     """True solo para el único Super Admin del sistema. Es is_superuser de Django."""
-    return user.is_superuser
+    return bool(user and getattr(user, "is_superuser", False))
 
 
 def es_admin_especial(user):
     """True si pertenece al grupo 'admin_especial'."""
-    return user.groups.filter(name="admin_especial").exists()
+    return bool(user and user.groups.filter(name="admin_especial").exists())
 
 
 def es_administrador(user):
     """True si pertenece al grupo 'administrador' (rol normal, no el especial)."""
-    return user.groups.filter(name="administrador").exists()
+    return bool(user and user.groups.filter(name="administrador").exists())
 
 
 def es_trabajador(user):
@@ -240,11 +240,6 @@ def admin_usuario_form(request, pk=None):
             messages.error(request, "No puedes cambiar tu propio rol.")
             return redirect("admin_usuario_form", pk=usuario.pk)
         
-        # El Super Admin nunca puede quedar inactivo.
-        if es_super_admin(usuario):
-            usuario.is_active = True
-        else:
-            usuario.is_active = is_active    
         password = request.POST.get("password", "")
         password_confirm = request.POST.get("password_confirm", "")
 
@@ -253,8 +248,8 @@ def admin_usuario_form(request, pk=None):
         # que muestre el HTML del formulario
         if not (usuario and es_super_admin(usuario)):
             if rol not in roles_disponibles:
-             messages.error(request, "No tenés permiso para asignar ese rol.")
-             return redirect("admin_panel")
+                messages.error(request, "No tenés permiso para asignar ese rol.")
+                return redirect("admin_panel")
 
         if not username:
             messages.error(request, "El usuario es obligatorio.")
@@ -268,11 +263,16 @@ def admin_usuario_form(request, pk=None):
             if not usuario:
                 usuario = User(username=username)
 
+            # El Super Admin nunca puede quedar inactivo.
+            if es_super_admin(usuario):
+                usuario.is_active = True
+            else:
+                usuario.is_active = is_active
+
             usuario.username = username
             usuario.first_name = first_name
             usuario.last_name = last_name
             usuario.email = email
-            usuario.is_active = is_active
             usuario.save()  # primero guardamos para tener un pk antes de tocar grupos
 
             if not es_super_admin(usuario):
