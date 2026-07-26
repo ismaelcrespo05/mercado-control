@@ -568,7 +568,26 @@ def consultar_codigo(request):
             "origen": ficha.origen,
         })
 
-    # 2. No está en nuestro catálogo: preguntar a Open Food Facts
+    # 2. Si no está en el catálogo, buscar en la tabla principal de productos
+    producto = Producto.objects.filter(codigo_barra=codigo).order_by("-fecha_registro").first()
+    if producto:
+        ficha_manual = CatalogoProducto.objects.filter(codigo_barra=codigo).first()
+        if ficha_manual is None:
+            CatalogoProducto.objects.create(
+                codigo_barra=codigo,
+                nombre=producto.nombre,
+                marca="",
+                origen="manual",
+            )
+        return JsonResponse({
+            "found": True,
+            "nombre": producto.nombre,
+            "marca": "",
+            "foto": "",
+            "origen": "manual",
+        })
+
+    # 3. No está en nuestro catálogo: preguntar a Open Food Facts
     resultado_api = buscar_en_openfoodfacts(codigo)
 
     if resultado_api:
@@ -588,7 +607,7 @@ def consultar_codigo(request):
             "origen": "api",
         })
 
-    # 3. No se encontró en ningún lado: el formulario pedirá los datos a mano
+    # 4. No se encontró en ningún lado: el formulario pedirá los datos a mano
     return JsonResponse({"found": False})
 
 
@@ -909,6 +928,78 @@ def listar_avarias(request):
         "avarias": avarias,
         "estado_filter": estado_filter,
         "total_pendientes": Avaria.objects.filter(estado="pendiente").count(),
+    })
+
+
+@login_required(login_url='login')
+def editar_avaria(request, pk):
+    """
+    Permite editar una avaria pendiente. El usuario que la reportó puede
+    modificar el producto, el código de barras, la cantidad y el tipo de daño.
+    """
+    avaria = Avaria.objects.filter(pk=pk).first()
+    if avaria is None:
+        messages.info(request, "Esse relatório não existe mais.")
+        return redirect("listar_avarias")
+
+    if avaria.estado != "pendiente":
+        messages.info(request, "Só é possível editar avarias pendentes.")
+        return redirect("listar_avarias")
+
+    if request.user != avaria.reportado_por and not puede_editar(request.user):
+        messages.error(request, "Você não tem permissão para editar esta avaria.")
+        return redirect("listar_avarias")
+
+    if request.method == "POST":
+        codigo = request.POST.get("codigo_barra", "").strip()
+        nombre = request.POST.get("nombre", "").strip()
+        cantidad_str = request.POST.get("cantidad", "1").strip()
+        tipo = request.POST.get("tipo_danio", "").strip()
+
+        if not codigo.isdigit():
+            messages.error(request, "O código de barras só pode conter números.")
+            return render(request, "productos/editar_avaria.html", {
+                "avaria": avaria,
+                "tipos": Avaria.TIPOS_DANIO,
+            })
+
+        if not nombre:
+            messages.error(request, "O nome do produto é obrigatório.")
+            return render(request, "productos/editar_avaria.html", {
+                "avaria": avaria,
+                "tipos": Avaria.TIPOS_DANIO,
+            })
+
+        try:
+            cantidad = int(cantidad_str)
+            if cantidad <= 0:
+                raise ValueError
+        except ValueError:
+            messages.error(request, "A quantidade deve ser um número maior que 0.")
+            return render(request, "productos/editar_avaria.html", {
+                "avaria": avaria,
+                "tipos": Avaria.TIPOS_DANIO,
+            })
+
+        if tipo not in dict(Avaria.TIPOS_DANIO):
+            messages.error(request, "Selecione um tipo de avaria válido.")
+            return render(request, "productos/editar_avaria.html", {
+                "avaria": avaria,
+                "tipos": Avaria.TIPOS_DANIO,
+            })
+
+        avaria.codigo_barra = codigo
+        avaria.nombre = nombre
+        avaria.tipo_danio = tipo
+        avaria.cantidad = cantidad
+        avaria.save()
+
+        messages.success(request, f"Avaria de '{nombre}' atualizada com sucesso.")
+        return redirect("listar_avarias")
+
+    return render(request, "productos/editar_avaria.html", {
+        "avaria": avaria,
+        "tipos": Avaria.TIPOS_DANIO,
     })
 
 

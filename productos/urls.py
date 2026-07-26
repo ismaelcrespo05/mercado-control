@@ -26,6 +26,7 @@ urlpatterns = [
     path("recuperar/verificar/",    views.verificar_codigo,       name="verificar_codigo"),
     path("avarias/",                  views.listar_avarias,   name="listar_avarias"),
     path("avarias/reportar/",         views.reportar_avaria,  name="reportar_avaria"),
+    path("avarias/editar/<int:pk>/",  views.editar_avaria,    name="editar_avaria"),
     path("avarias/cerrar/<int:pk>/",  views.cerrar_avaria,    name="cerrar_avaria"),
 
 ]

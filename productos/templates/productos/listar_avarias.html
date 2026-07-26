@@ -63,7 +63,10 @@
         </td>
         <td>
           {% if a.estado == "pendiente" %}
-            <a href="{% url 'cerrar_avaria' a.pk %}" class="btn btn-sm btn-ghost">Fechar</a>
+            <div style="display:flex; gap:0.4rem; flex-wrap:wrap;">
+              <a href="{% url 'editar_avaria' a.pk %}" class="btn btn-sm btn-ghost">Editar</a>
+              <a href="{% url 'cerrar_avaria' a.pk %}" class="btn btn-sm btn-ghost">Fechar</a>
+            </div>
           {% else %}
             <span class="muted">
               {{ a.cerrado_por|default:"—" }}<br>
