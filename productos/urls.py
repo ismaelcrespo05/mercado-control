@@ -13,6 +13,7 @@ urlpatterns = [
     path("buscar-codigo/", views.buscar_codigo, name="buscar_codigo"),
     path("buscar-productos/", views.buscar_productos, name="buscar_productos"),
     path("editar/<int:pk>/", views.editar_producto, name="editar"),
+    path("marcar-revisado/<int:pk>/", views.marcar_revisado, name="marcar_revisado"),
 
     path("eliminar/<int:pk>/", views.eliminar, name="eliminar"),
     path("configuracion/", views.configuracion, name="configuracion"),
@@ -28,5 +29,6 @@ urlpatterns = [
     path("avarias/reportar/",         views.reportar_avaria,  name="reportar_avaria"),
     path("avarias/editar/<int:pk>/",  views.editar_avaria,    name="editar_avaria"),
     path("avarias/cerrar/<int:pk>/",  views.cerrar_avaria,    name="cerrar_avaria"),
+    path("avarias/limpiar-vencidos/", views.limpiar_productos_vencidos, name="limpiar_productos_vencidos"),
 
 ]

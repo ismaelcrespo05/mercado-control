@@ -67,6 +67,15 @@ class Producto(models.Model):
     fecha_vencimiento = models.DateField(verbose_name="Fecha de vencimiento")
     cantidad = models.PositiveIntegerField(default=1, verbose_name="Cantidad en stock")
     fecha_registro = models.DateTimeField(auto_now_add=True)
+    revisado = models.BooleanField(default=False, verbose_name="Revisado")
+    revisado_por = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="productos_revisados",
+        verbose_name="Revisado por",
+    )
 
     class Meta:
         verbose_name = "Producto"

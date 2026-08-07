@@ -32,7 +32,7 @@
   <div class="section-head">
     <h2 data-i18n="dashboard.filtros">Filtros</h2>
   </div>
-  <form method="get">
+  <form method="get" id="filtrosForm">
   <div class="filter-grid">
     <div class="form-group">
       <label for="filtro_nombre" data-i18n="forms.nombre">Nombre</label>
@@ -40,7 +40,10 @@
     </div>
     <div class="form-group">
       <label for="filtro_codigo" data-i18n="forms.codigo">Código</label>
-      <input type="text" id="filtro_codigo" name="codigo" placeholder="Buscar por código..." value="{{ codigo_filter }}" data-i18n-placeholder="placeholders.buscar" />
+      <div style="display:flex; gap:0.5rem; align-items:center;">
+        <input type="text" id="filtro_codigo" name="codigo" placeholder="Buscar por código..." value="{{ codigo_filter }}" data-i18n-placeholder="placeholders.buscar" style="flex:1;" />
+        <button type="button" id="btnScanCodigo" class="btn btn-ghost" title="Escanear código" aria-label="Escanear código" data-scan-code="true">📷</button>
+      </div>
     </div>
     <div class="form-group">
       <label for="fecha_desde" data-i18n="filters.desde">Desde</label>
@@ -88,9 +91,17 @@
             data-estado="{{ p.estado }}"
             data-foto=""
             data-pk="{{ p.pk }}"
+            data-revisado="{% if p.revisado %}1{% else %}0{% endif %}"
             data-can-edit="{% if can_edit %}1{% else %}0{% endif %}"
             data-is-staff="{% if user.is_staff %}1{% else %}0{% endif %}">
-          <td><strong>{{ p.nombre }}</strong></td>
+          <td>
+            <strong>{{ p.nombre }}</strong>
+            {% if p.revisado %}
+            <br><span class="badge badge-ok">Revisado</span>
+            {% else %}
+            <br><span class="badge badge-warn">Pendiente</span>
+            {% endif %}
+          </td>
           <td class="code">{{ p.codigo_barra }}</td>
           <td>{{ p.fecha_vencimiento }}</td>
           <td><span class="badge badge-danger">{{ p.dias_para_vencer|add:"0" }} días</span></td>
@@ -100,7 +111,14 @@
             {% if can_edit %}
             <a href="{% url 'editar' p.pk %}" class="btn btn-sm btn-ghost" data-i18n="buttons.editar">Editar</a>
             {% endif %}
-            <a href="{% url 'reportar_avaria' %}" class="btn btn-sm btn-ghost">Avaria</a>
+            {% if can_review %}
+            <form method="post" action="{% url 'marcar_revisado' p.pk %}" style="display:inline;">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm {% if p.revisado %}btn-ghost{% else %}btn-primary{% endif %}">
+                {% if p.revisado %}Quitar revisión{% else %}Marcar revisado{% endif %}
+              </button>
+            </form>
+            {% endif %}
             {% if user.is_staff %}
             <form method="post" action="{% url 'eliminar' p.pk %}" onsubmit="return confirm('¿Eliminar {{ p.nombre }}?')">
               {% csrf_token %}
@@ -146,9 +164,17 @@
             data-estado="{{ p.estado }}"
             data-foto=""
             data-pk="{{ p.pk }}"
+            data-revisado="{% if p.revisado %}1{% else %}0{% endif %}"
             data-can-edit="{% if can_edit %}1{% else %}0{% endif %}"
             data-is-staff="{% if user.is_staff %}1{% else %}0{% endif %}">
-          <td><strong>{{ p.nombre }}</strong></td>
+          <td>
+            <strong>{{ p.nombre }}</strong>
+            {% if p.revisado %}
+            <br><span class="badge badge-ok">Revisado</span>
+            {% else %}
+            <br><span class="badge badge-warn">Pendiente</span>
+            {% endif %}
+          </td>
           <td class="code">{{ p.codigo_barra }}</td>
           <td>{{ p.fecha_vencimiento }}</td>
           <td><span class="badge badge-warn">{{ p.dias_para_vencer }} días</span></td>
@@ -158,7 +184,14 @@
             {% if can_edit %}
             <a href="{% url 'editar' p.pk %}" class="btn btn-sm btn-ghost" data-i18n="buttons.editar">Editar</a>
             {% endif %}
-            <a href="{% url 'reportar_avaria' %}" class="btn btn-sm btn-ghost">Avaria</a>
+            {% if can_review %}
+            <form method="post" action="{% url 'marcar_revisado' p.pk %}" style="display:inline;">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm {% if p.revisado %}btn-ghost{% else %}btn-primary{% endif %}">
+                {% if p.revisado %}Quitar revisión{% else %}Marcar revisado{% endif %}
+              </button>
+            </form>
+            {% endif %}
             {% if user.is_staff %}
             <form method="post" action="{% url 'eliminar' p.pk %}" onsubmit="return confirm('¿Eliminar {{ p.nombre }}?')">
               {% csrf_token %}
@@ -204,9 +237,17 @@
             data-estado="{{ p.estado }}"
             data-foto=""
             data-pk="{{ p.pk }}"
+            data-revisado="{% if p.revisado %}1{% else %}0{% endif %}"
             data-can-edit="{% if can_edit %}1{% else %}0{% endif %}"
             data-is-staff="{% if user.is_staff %}1{% else %}0{% endif %}">
-          <td><strong>{{ p.nombre }}</strong></td>
+          <td>
+            <strong>{{ p.nombre }}</strong>
+            {% if p.revisado %}
+            <br><span class="badge badge-ok">Revisado</span>
+            {% else %}
+            <br><span class="badge badge-warn">Pendiente</span>
+            {% endif %}
+          </td>
           <td class="code">{{ p.codigo_barra }}</td>
           <td>{{ p.fecha_vencimiento }}</td>
           <td><span class="badge badge-ok">{{ p.dias_para_vencer }} días</span></td>
@@ -215,6 +256,14 @@
            
             {% if can_edit %}
             <a href="{% url 'editar' p.pk %}" class="btn btn-sm btn-ghost" data-i18n="buttons.editar">Editar</a>
+            {% endif %}
+            {% if can_review %}
+            <form method="post" action="{% url 'marcar_revisado' p.pk %}" style="display:inline;">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-sm {% if p.revisado %}btn-ghost{% else %}btn-primary{% endif %}">
+                {% if p.revisado %}Quitar revisión{% else %}Marcar revisado{% endif %}
+              </button>
+            </form>
             {% endif %}
             {% if user.is_staff %}
             <form method="post" action="{% url 'eliminar' p.pk %}" onsubmit="return confirm('¿Eliminar {{ p.nombre }}?')">
@@ -269,14 +318,105 @@
           <p>Estado</p>
           <p id="modalEstado"></p>
         </div>
+        <div class="modal-field">
+          <p>Revisión</p>
+          <p id="modalRevision"></p>
+        </div>
       </div>
 
       <div class="modal-actions" id="modalActions"></div>
     </div>
   </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/quagga@0.12.1/dist/quagga.min.js"></script>
 <script>
 let pkActual = null;
+let scanCodigoActivo = false;
+let scanCodigoLecturas = {};
+
+function abrirEscanerCodigo() {
+  const input = document.getElementById('filtro_codigo');
+  const container = document.getElementById('scanCodigoContainer');
+  if (!container) {
+    const wrapper = document.createElement('div');
+    wrapper.id = 'scanCodigoContainer';
+    wrapper.style.position = 'fixed';
+    wrapper.style.inset = '0';
+    wrapper.style.background = 'rgba(0,0,0,0.7)';
+    wrapper.style.display = 'flex';
+    wrapper.style.alignItems = 'center';
+    wrapper.style.justifyContent = 'center';
+    wrapper.style.zIndex = '99999';
+    wrapper.innerHTML = `
+      <div style="width:min(92vw, 560px); background:var(--surface); border-radius:14px; padding:1rem; box-shadow:0 16px 48px rgba(0,0,0,0.3);">
+        <div id="scanCodigoViewport" style="position:relative; border-radius:10px; overflow:hidden; background:#000; aspect-ratio:4/3; max-height:360px;"></div>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="cerrarEscanerCodigo()" style="margin-top:0.75rem; width:100%;">✕ Cerrar cámara</button>
+      </div>
+    `;
+    document.body.appendChild(wrapper);
+  }
+
+  document.getElementById('scanCodigoContainer').style.display = 'flex';
+  scanCodigoActivo = true;
+  scanCodigoLecturas = {};
+
+  Quagga.init({
+    inputStream: {
+      name: 'Live',
+      type: 'LiveStream',
+      target: document.getElementById('scanCodigoViewport'),
+      constraints: {
+        facingMode: 'environment',
+        width: { min: 640, ideal: 1280, max: 1920 },
+        height: { min: 480, ideal: 720, max: 1080 },
+        aspectRatio: { min: 1, max: 2 }
+      }
+    },
+    locator: { patchSize: 'medium', halfSample: true },
+    numOfWorkers: navigator.hardwareConcurrency ? Math.min(navigator.hardwareConcurrency, 4) : 2,
+    frequency: 10,
+    decoder: {
+      readers: ['ean_reader','ean_8_reader','code_128_reader','code_39_reader','upc_reader','upc_e_reader'],
+      multiple: false
+    },
+    locate: true
+  }, function(err) {
+    if (err) {
+      alert('No se pudo acceder a la cámara.');
+      cerrarEscanerCodigo();
+      return;
+    }
+    Quagga.start();
+  });
+
+  Quagga.onDetected(function(result) {
+    const codigo = result.codeResult.code;
+    if (!/^[0-9]+$/.test(codigo)) return;
+
+    scanCodigoLecturas[codigo] = (scanCodigoLecturas[codigo] || 0) + 1;
+    if (scanCodigoLecturas[codigo] >= 2) {
+      if (input) input.value = codigo;
+      cerrarEscanerCodigo();
+      document.getElementById('filtrosForm').dispatchEvent(new Event('submit'));
+    }
+  });
+}
+
+function cerrarEscanerCodigo() {
+  if (scanCodigoActivo) {
+    Quagga.stop();
+    scanCodigoActivo = false;
+  }
+  const container = document.getElementById('scanCodigoContainer');
+  if (container) container.style.display = 'none';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  const btn = document.getElementById('btnScanCodigo');
+  if (btn) {
+    btn.addEventListener('click', abrirEscanerCodigo);
+  }
+});
 
 function abrirModal(fila) {
   const d = fila.dataset;
@@ -305,6 +445,11 @@ function abrirModal(fila) {
     estadoEl.innerHTML = '<span class="badge badge-ok">Buen estado</span>';
   }
 
+  const revisionEl = document.getElementById("modalRevision");
+  revisionEl.innerHTML = d.revisado === "1"
+    ? '<span class="badge badge-ok">Revisado</span>'
+    : '<span class="badge badge-warn">Pendiente</span>';
+
   // Foto
   const foto = document.getElementById("modalFoto");
   const placeholder = document.getElementById("modalPlaceholder");
@@ -322,8 +467,6 @@ function abrirModal(fila) {
   // Botones de acción
   const acciones = document.getElementById("modalActions");
   let botonesHTML = `
-   
-    <a href="/avarias/reportar/" class="btn btn-ghost btn-sm">🔧 Avaria</a>
   `;
   if (d.canEdit === "1") {
     botonesHTML += `<a href="/editar/${d.pk}/" class="btn btn-ghost btn-sm">✏️ Editar</a>`;

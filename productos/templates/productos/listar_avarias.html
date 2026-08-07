@@ -24,9 +24,15 @@
     <a href="?estado=cerrado" class="btn btn-sm {% if estado_filter == 'cerrado' %}btn-primary{% else %}btn-ghost{% endif %}">
       Fechados
     </a>
-    <a href="?" class="btn btn-sm {% if estado_filter not in 'pendiente cerrado' %}btn-primary{% else %}btn-ghost{% endif %}">
+    <a href="?estado=all" class="btn btn-sm {% if estado_filter == 'all' %}btn-primary{% else %}btn-ghost{% endif %}">
       Todos
     </a>
+    {% if puede_limpiar %}
+    <form method="post" action="{% url 'limpiar_productos_vencidos' %}" style="display:inline;" onsubmit="return confirm('¿Eliminar todos los productos vencidos del stock?')">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-sm btn-danger">Limpiar vencidos</button>
+    </form>
+    {% endif %}
   </div>
 </div>
 

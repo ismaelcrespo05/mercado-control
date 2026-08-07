@@ -47,7 +47,12 @@ def puede_gestionar_usuarios(user):
     usuarios (sin importar todavía a quién le toque o no). Se usa en
     los decoradores @user_passes_test de las vistas.
     """
-    return es_super_admin(user) or es_admin_especial(user) or es_administrador(user)
+    return bool(user and (
+        getattr(user, "is_staff", False)
+        or es_super_admin(user)
+        or es_admin_especial(user)
+        or es_administrador(user)
+    ))
 
 
 def puede_editar(user):
@@ -354,7 +359,24 @@ def dashboard(request):
         "fecha_desde": fecha_desde,
         "fecha_hasta": fecha_hasta,
         "can_edit": puede_editar(request.user),
+        "can_review": puede_gestionar_usuarios(request.user),
     })
+
+
+@login_required(login_url='login')
+def marcar_revisado(request, pk):
+    producto = get_object_or_404(Producto, pk=pk)
+
+    if request.method == "POST":
+        producto.revisado = not producto.revisado
+        producto.revisado_por = request.user if producto.revisado else None
+        producto.save()
+        if producto.revisado:
+            messages.success(request, f"Producto '{producto.nombre}' marcado como revisado.")
+        else:
+            messages.info(request, f"Se quitó la revisión de '{producto.nombre}'.")
+
+    return redirect(request.META.get("HTTP_REFERER", "dashboard"))
 
 
 @login_required(login_url='login')
@@ -915,20 +937,44 @@ def listar_avarias(request):
     """
     Lista todos los reportes de avarias.
     Cualquier funcionario puede verlos.
-    Se puede filtrar por estado (pendiente/cerrado).
+    Se puede filtrar por estado (pendiente/cerrado) o ver todos.
     """
     estado_filter = request.GET.get("estado", "pendiente")
 
     avarias = Avaria.objects.select_related("reportado_por", "cerrado_por")
 
-    if estado_filter in ("pendiente", "cerrado"):
-        avarias = avarias.filter(estado=estado_filter)
+    if estado_filter == "pendiente":
+        avarias = avarias.filter(estado="pendiente")
+    elif estado_filter == "cerrado":
+        avarias = avarias.filter(estado="cerrado")
+    elif estado_filter == "all":
+        avarias = avarias.all()
 
     return render(request, "productos/listar_avarias.html", {
         "avarias": avarias,
         "estado_filter": estado_filter,
         "total_pendientes": Avaria.objects.filter(estado="pendiente").count(),
+        "puede_limpiar": es_super_admin(request.user),
     })
+
+
+@login_required(login_url='login')
+def limpiar_productos_vencidos(request):
+    """Elimina productos vencidos del stock para liberar espacio, solo para super admin."""
+    if not es_super_admin(request.user):
+        messages.error(request, "Solo el super administrador puede ejecutar esta acción.")
+        return redirect("listar_avarias")
+
+    if request.method != "POST":
+        return redirect("listar_avarias")
+
+    hoy = timezone.now().date()
+    productos_vencidos = Producto.objects.filter(fecha_vencimiento__lt=hoy)
+    cantidad = productos_vencidos.count()
+    productos_vencidos.delete()
+
+    messages.success(request, f"Se eliminaron {cantidad} productos vencidos del stock.")
+    return redirect("listar_avarias")
 
 
 @login_required(login_url='login')
