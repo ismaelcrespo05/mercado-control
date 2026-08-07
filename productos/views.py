@@ -960,7 +960,7 @@ def listar_avarias(request):
 
 @login_required(login_url='login')
 def limpiar_productos_vencidos(request):
-    """Elimina productos vencidos del stock para liberar espacio, solo para super admin."""
+    """Elimina las averías cerradas del módulo de averías, solo para super admin."""
     if not es_super_admin(request.user):
         messages.error(request, "Solo el super administrador puede ejecutar esta acción.")
         return redirect("listar_avarias")
@@ -968,12 +968,11 @@ def limpiar_productos_vencidos(request):
     if request.method != "POST":
         return redirect("listar_avarias")
 
-    hoy = timezone.now().date()
-    productos_vencidos = Producto.objects.filter(fecha_vencimiento__lt=hoy)
-    cantidad = productos_vencidos.count()
-    productos_vencidos.delete()
+    avarias_cerradas = Avaria.objects.filter(estado="cerrado")
+    cantidad = avarias_cerradas.count()
+    avarias_cerradas.delete()
 
-    messages.success(request, f"Se eliminaron {cantidad} productos vencidos del stock.")
+    messages.success(request, f"Se eliminaron {cantidad} averías cerradas.")
     return redirect("listar_avarias")
 
 

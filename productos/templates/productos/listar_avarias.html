@@ -28,9 +28,9 @@
       Todos
     </a>
     {% if puede_limpiar %}
-    <form method="post" action="{% url 'limpiar_productos_vencidos' %}" style="display:inline;" onsubmit="return confirm('¿Eliminar todos los productos vencidos del stock?')">
+    <form method="post" action="{% url 'limpiar_productos_vencidos' %}" style="display:inline;" onsubmit="return confirm('¿Eliminar todas las averías ya cerradas?')">
       {% csrf_token %}
-      <button type="submit" class="btn btn-sm btn-danger">Limpiar vencidos</button>
+      <button type="submit" class="btn btn-sm btn-danger">Limpiar avarias cerradas</button>
     </form>
     {% endif %}
   </div>

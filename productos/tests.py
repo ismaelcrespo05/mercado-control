@@ -3,6 +3,7 @@ from datetime import date, timedelta
 from django.test import TestCase
 from django.contrib.auth.models import Group, User
 from django.urls import reverse
+from django.utils import timezone
 
 from .models import Producto, Avaria
 from .views import es_super_admin, es_admin_especial, es_administrador, es_trabajador
@@ -118,19 +119,23 @@ class AvariasTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Leche dañada")
 
-    def test_super_admin_puede_limpiar_productos_vencidos(self):
-        Producto.objects.create(
+    def test_super_admin_puede_eliminar_avarias_cerradas(self):
+        avaria_cerrada = Avaria.objects.create(
             codigo_barra="2222222222222",
-            nombre="Producto vencido",
-            fecha_vencimiento="2000-01-01",
+            nombre="Producto ya revisado",
+            tipo_danio="otro",
             cantidad=1,
+            estado="cerrado",
+            reportado_por=self.user,
+            cerrado_por=self.superadmin,
+            fecha_cierre=timezone.now(),
         )
 
         self.client.force_login(self.superadmin)
         response = self.client.post(reverse("limpiar_productos_vencidos"))
 
         self.assertEqual(response.status_code, 302)
-        self.assertFalse(Producto.objects.filter(codigo_barra="2222222222222").exists())
+        self.assertFalse(Avaria.objects.filter(pk=avaria_cerrada.pk).exists())
 
 
 class RevisarProductoTests(TestCase):
