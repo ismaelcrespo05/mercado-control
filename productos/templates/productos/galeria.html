@@ -4,13 +4,13 @@
 {% block content %}
 <div class="page-header">
   <div class="page-title-group">
-    <h1>Galería de productos</h1>
+    <h1 data-i18n="galeria.title">Galería de productos</h1>
     <p class="page-subtitle">
       {{ total }} producto{{ total|pluralize }} en el catálogo{% if busqueda %} para "{{ busqueda }}"{% endif %}.
     </p>
   </div>
   <div class="page-actions">
-    <a href="{% url 'dashboard' %}" class="btn btn-ghost">Volver</a>
+    <a href="{% url 'dashboard' %}" class="btn btn-ghost" data-i18n="buttons.volver">Volver</a>
   </div>
 </div>
 
@@ -20,11 +20,11 @@
       type="text"
       name="q"
       value="{{ busqueda }}"
-      placeholder="Buscar producto por nombre..."
+      placeholder="Buscar producto por nombre..." data-i18n-placeholder="galeria.placeholder"
     >
-    <button type="submit" class="btn btn-primary">Buscar</button>
+    <button type="submit" class="btn btn-primary" data-i18n="nav.buscar">Buscar</button>
     {% if busqueda %}
-    <a href="{% url 'galeria_productos' %}" class="btn btn-ghost">Limpiar</a>
+    <a href="{% url 'galeria_productos' %}" class="btn btn-ghost" data-i18n="dashboard.limpiar">Limpiar</a>
     {% endif %}
   </form>
 </div>
@@ -54,7 +54,7 @@
 {% if sin_foto %}
 <div class="section">
   <div class="section-head">
-    <h2>Sin foto todavía</h2>
+    <h2 data-i18n="galeria.sinFoto">Sin foto todavía</h2>
     <span class="badge badge-warn">{{ sin_foto|length }}</span>
   </div>
   <div class="table-wrap">

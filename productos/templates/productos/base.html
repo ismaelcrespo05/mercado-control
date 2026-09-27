@@ -1,15 +1,10 @@
-{% load static group_tags %}
+{% load static group_tags i18n %}
 <!DOCTYPE html>
-<html lang="es" data-theme="dark">
+<html lang="{{ LANGUAGE_CODE }}" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}StockCheck{% endblock %}</title>
-
-  <!-- i18next CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/i18next@23.5.0/i18next.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/i18next-http-backend@2.4.2/i18nextHttpBackend.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/i18next-browser-languagedetector@7.2.0/i18nextBrowserLanguageDetector.min.js"></script>
 
   <style>
     [data-theme="dark"] {
@@ -1117,8 +1112,8 @@
     <div class="nav-links">
       <a href="{% url 'dashboard' %}" {% if request.resolver_match.url_name == 'dashboard' %}class="active"{% endif %} data-i18n="nav.inicio">Inicio</a>
       <a href="{% url 'configuracion' %}" {% if request.resolver_match.url_name == 'configuracion' %}class="active"{% endif %} data-i18n="nav.config">Configuración</a>
-      <a href="{% url 'pagina_buscador' %}" {% if request.resolver_match.url_name == 'pagina_buscador' %}class="active"{% endif %}>🔍 Buscar</a>
-      <a href="{% url 'listar_avarias' %}" {% if request.resolver_match.url_name == 'listar_avarias' %}class="active"{% endif %}>🔧 Avarias</a>
+      <a href="{% url 'pagina_buscador' %}" {% if request.resolver_match.url_name == 'pagina_buscador' %}class="active"{% endif %} data-i18n="nav.buscar">🔍 Buscar</a>
+      <a href="{% url 'listar_avarias' %}" {% if request.resolver_match.url_name == 'listar_avarias' %}class="active"{% endif %} data-i18n="nav.avarias">🔧 Avarias</a>
     </div>
   </div>
 
@@ -1131,10 +1126,14 @@
         <span>▼</span>
       </button>
       <div class="dropdown-menu" id="langMenu">
-        <button type="button" onclick="changeLanguage_i18next('es'); toggleLangMenu()">🇪🇸 Español</button>
-        <button type="button" onclick="changeLanguage_i18next('pt'); toggleLangMenu()">🇧🇷 Português</button>
-        <button type="button" onclick="changeLanguage_i18next('en'); toggleLangMenu()">🇺🇸 English</button>
-        <button type="button" onclick="changeLanguage_i18next('fr'); toggleLangMenu()">🇫🇷 Français</button>
+        <form method="post" action="{% url 'set_language' %}">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ request.get_full_path }}">
+          <button type="submit" name="language" value="es">🇪🇸 Español</button>
+          <button type="submit" name="language" value="pt">🇧🇷 Português</button>
+          <button type="submit" name="language" value="en">🇺🇸 English</button>
+          <button type="submit" name="language" value="fr">🇫🇷 Français</button>
+        </form>
       </div>
     </div>
 
@@ -1156,7 +1155,7 @@
       </button>
       <div class="dropdown-menu" id="userMenu">
         {% if user.is_superuser or user|has_group:'admin_especial' or user|has_group:'administrador' %}
-        <a href="{% url 'admin_panel' %}" style="display: block;">Panel admin</a>
+        <a href="{% url 'admin_panel' %}" style="display: block;" data-i18n="nav.panelAdmin">Panel admin</a>
         {% endif %}
         <a href="{% url 'logout' %}" data-i18n="nav.logout">🚪 Logout</a>
       </div>
@@ -1171,27 +1170,31 @@
   <div class="mobile-menu" id="mobileMenu">
     <a href="{% url 'dashboard' %}" data-i18n="nav.inicio">Inicio</a>
     <a href="{% url 'configuracion' %}" data-i18n="nav.config">Configuración</a>
-    <a href="{% url 'pagina_buscador' %}">🔍 Buscar</a>
-    <a href="{% url 'listar_avarias' %}">🔧 Avarias</a>
+    <a href="{% url 'pagina_buscador' %}" data-i18n="nav.buscar">🔍 Buscar</a>
+    <a href="{% url 'listar_avarias' %}" data-i18n="nav.avarias">🔧 Avarias</a>
     <hr>
     <a href="{% url 'escanear' %}" class="nav-scan" data-i18n="nav.escanear">+ Escanear</a>
     <hr>
-    <div class="mobile-menu-label">Idioma</div>
+    <div class="mobile-menu-label" data-i18n="nav.idioma">Idioma</div>
     <div class="mobile-menu-grid" aria-label="Cambiar idioma">
-      <button type="button" onclick="changeLanguage_i18next('es'); closeMobileMenu()">🇪🇸 Español</button>
-      <button type="button" onclick="changeLanguage_i18next('pt'); closeMobileMenu()">🇧🇷 Português</button>
-      <button type="button" onclick="changeLanguage_i18next('en'); closeMobileMenu()">🇺🇸 English</button>
-      <button type="button" onclick="changeLanguage_i18next('fr'); closeMobileMenu()">🇫🇷 Français</button>
+      <form method="post" action="{% url 'set_language' %}">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+        <button type="submit" name="language" value="es">🇪🇸 Español</button>
+        <button type="submit" name="language" value="pt">🇧🇷 Português</button>
+        <button type="submit" name="language" value="en">🇺🇸 English</button>
+        <button type="submit" name="language" value="fr">🇫🇷 Français</button>
+      </form>
     </div>
     <button type="button" onclick="toggleTheme()">
       <span data-theme-icon>🌙</span>
-      <span data-theme-label>Tema oscuro</span>
+      <span data-theme-label data-i18n="nav.temaOscuro">Tema oscuro</span>
     </button>
     <hr>
     {% if user.is_authenticated %}
     <div class="mobile-menu-user">👤 {{ user.first_name|default:user.username }}</div>
     {% if user.is_superuser or user|has_group:'admin_especial' or user|has_group:'administrador' %}
-    <a href="{% url 'admin_panel' %}">Panel admin</a>
+    <a href="{% url 'admin_panel' %}" data-i18n="nav.panelAdmin">Panel admin</a>
     {% endif %}
     <a href="{% url 'logout' %}" data-i18n="nav.logout">Cerrar sesión</a>
     {% endif %}
@@ -1210,8 +1213,7 @@
   {% block content %}{% endblock %}
 </main>
 
-<!-- i18next Config -->
-<script src="{% static 'js/i18next-config.js' %}"></script>
+<script src="{% url 'javascript-catalog' %}"></script>
 
 <script>
 let currentTheme = localStorage.getItem('theme') || 'dark';
@@ -1252,6 +1254,34 @@ function closeMobileMenu() {
   document.getElementById('hamburger').setAttribute('aria-expanded', 'false');
 }
 
+function updatePageLanguage() {
+  document.querySelectorAll('[data-i18n]').forEach((el) => {
+    const text = gettext(el.getAttribute('data-i18n'));
+
+    if (el.tagName === 'INPUT' && el.type !== 'hidden') {
+      el.placeholder = text;
+    } else if (el.tagName === 'LABEL' || el.tagName === 'BUTTON' || el.tagName === 'A') {
+      el.textContent = text;
+    } else {
+      el.textContent = text;
+    }
+  });
+
+  document.querySelectorAll('[data-i18n-placeholder]').forEach((el) => {
+    el.placeholder = gettext(el.getAttribute('data-i18n-placeholder'));
+  });
+
+  document.querySelectorAll('[data-i18n-title]').forEach((el) => {
+    el.title = gettext(el.getAttribute('data-i18n-title'));
+  });
+
+  document.querySelectorAll('[data-i18n-aria-label]').forEach((el) => {
+    el.setAttribute('aria-label', gettext(el.getAttribute('data-i18n-aria-label')));
+  });
+}
+
+document.addEventListener('DOMContentLoaded', updatePageLanguage);
+
 function toggleLangMenu() {
   const menu = document.getElementById('langMenu');
   menu.classList.toggle('active');
@@ -1265,18 +1295,6 @@ function toggleUserMenu() {
   if (menu) {
     menu.classList.toggle('active');
     document.getElementById('langMenu').classList.remove('active');
-  }
-}
-
-function changeLanguage_i18next(lang) {
-  const flags = {'es': '🇪🇸', 'pt': '🇧🇷', 'en': '🇺🇸', 'fr': '🇫🇷'};
-  const codes = {'es': 'ES', 'pt': 'PT', 'en': 'EN', 'fr': 'FR'};
-  
-  document.getElementById('langFlag').textContent = flags[lang] || '🇪🇸';
-  document.getElementById('langCode').textContent = codes[lang] || 'ES';
-  
-  if (typeof changeLanguage !== 'undefined') {
-    changeLanguage(lang);
   }
 }
 
@@ -1297,11 +1315,6 @@ document.addEventListener('click', (e) => {
 // Aplicar tema al cargar
 applyTheme(currentTheme);
 
-// Restablecer idioma al cargar
-document.addEventListener('DOMContentLoaded', () => {
-  const lang = localStorage.getItem('lang') || 'es';
-  changeLanguage_i18next(lang);
-});
 </script>
 
 </body>

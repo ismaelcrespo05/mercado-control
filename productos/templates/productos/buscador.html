@@ -1,28 +1,29 @@
 {% extends "productos/base.html" %}
+{% load i18n %}
 {% block title %}Buscar producto por nombre — StockCheck{% endblock %}
 
 {% block content %}
 <div class="page-header">
   <div class="page-title-group">
-    <h1>Buscar producto por nombre</h1>
-    <p class="page-subtitle">Encuentra productos guardados o consulta una base pública cuando falten datos.</p>
+    <h1 data-i18n="buscar.title">Buscar producto por nombre</h1>
+    <p class="page-subtitle" data-i18n="buscar.subtitle">Encuentra productos guardados o consulta una base pública cuando falten datos.</p>
   </div>
   <div class="page-actions">
-    <a href="{% url 'dashboard' %}" class="btn btn-ghost">Volver</a>
+    <a href="{% url 'dashboard' %}" class="btn btn-ghost" data-i18n="buttons.volver">Volver</a>
   </div>
 </div>
 
 <div class="card panel-md section">
   <div class="form-group">
-    <label for="input-nombre">Nombre del producto</label>
-    <input type="text" id="input-nombre" placeholder="Ej: leche, arroz, detergente..." autofocus>
+    <label for="input-nombre" data-i18n="forms.nombre">Nombre del producto</label>
+    <input type="text" id="input-nombre" data-i18n-placeholder="buscar.placeholder" placeholder="Ej: leche, arroz, detergente..." autofocus>
   </div>
   <div class="form-actions">
-    <button type="button" class="btn btn-primary" onclick="buscarPropio()">Buscar en mi catálogo</button>
-    <button type="button" class="btn btn-ghost" onclick="buscarExterna()">Buscar en base pública</button>
+    <button type="button" class="btn btn-primary" onclick="buscarPropio()" data-i18n="buscar.propio">Buscar en mi catálogo</button>
+    <button type="button" class="btn btn-ghost" onclick="buscarExterna()" data-i18n="buscar.externa">Buscar en base pública</button>
   </div>
   <p class="help-text">
-    La búsqueda en base pública es más lenta y tiene un límite de usos por minuto — usala cuando no encuentres el producto en tu propio catálogo.
+    <span data-i18n="buscar.ayuda">La búsqueda en base pública es más lenta y tiene un límite de usos por minuto — usala cuando no encuentres el producto en tu propio catálogo.</span>
   </p>
 </div>
 
@@ -31,7 +32,7 @@
 <!-- Resultados de tu catálogo -->
 <div id="resultados-propios" style="display:none;">
   <div class="section-head">
-    <h2>En tu catálogo</h2>
+    <h2 data-i18n="buscar.catalogo">En tu catálogo</h2>
   </div>
   <div id="grid-propios" class="result-grid"></div>
 </div>
@@ -39,9 +40,9 @@
 <!-- Resultados de Open Food Facts -->
 <div id="resultados-externos" style="display:none;">
   <div class="section-head">
-    <h2>Base pública</h2>
+    <h2 data-i18n="buscar.basePublica">Base pública</h2>
   </div>
-  <p class="help-text section">Clic en "Agregar a mi catálogo" para guardarlo y que aparezca automáticamente la próxima vez que escanees ese código.</p>
+  <p class="help-text section" data-i18n="buscar.agregarAyuda">Clic en "Agregar a mi catálogo" para guardarlo y que aparezca automáticamente la próxima vez que escanees ese código.</p>
   <div id="grid-externos" class="result-grid"></div>
 </div>
 
@@ -63,8 +64,8 @@
       : `<div class="sin-foto">📦</div>`;
 
     const boton = esExterno
-      ? `<button class="btn btn-sm btn-primary btn-block" onclick='agregarACatalogo(${JSON.stringify(item)})'>+ Agregar a mi catálogo</button>`
-      : `<span class="badge badge-ok">En catálogo</span>`;
+      ? `<button class="btn btn-sm btn-primary btn-block" onclick='agregarACatalogo(${JSON.stringify(item)})'>+ ${gettext("buscar.agregar")}</button>`
+      : `<span class="badge badge-ok">${gettext("buscar.enCatalogo")}</span>`;
 
     return `
       <div class="resultado-card">
@@ -82,7 +83,7 @@
     if (nombre.length < 2) return;
 
     estadoBusqueda.style.display = "block";
-    estadoBusqueda.textContent = "🔍 Buscando en tu catálogo...";
+    estadoBusqueda.textContent = `🔍 ${gettext("buscar.estadoPropio")}`;
     resultadosExternos.style.display = "none";
 
     const res = await fetch(`/buscar-por-nombre/?nombre=${encodeURIComponent(nombre)}`);
@@ -92,7 +93,7 @@
 
     if (data.propios.length === 0) {
       resultadosPropios.style.display = "block";
-      gridPropios.innerHTML = `<p class="muted grid-message">No se encontró nada en tu catálogo. Probá buscar en la base pública.</p>`;
+      gridPropios.innerHTML = `<p class="muted grid-message">${gettext("buscar.sinPropios")}</p>`;
       return;
     }
 
@@ -103,12 +104,12 @@
   async function buscarExterna() {
     const nombre = inputNombre.value.trim();
     if (nombre.length < 2) {
-      alert("Escribí al menos 2 letras para buscar.");
+      alert(gettext("buscar.minimo"));
       return;
     }
 
     estadoBusqueda.style.display = "block";
-    estadoBusqueda.textContent = "🌐 Buscando en base pública... puede tardar unos segundos.";
+    estadoBusqueda.textContent = `🌐 ${gettext("buscar.estadoExterna")}`;
 
     const res = await fetch(`/buscar-por-nombre/?nombre=${encodeURIComponent(nombre)}&externa=1`);
     const data = await res.json();
@@ -118,12 +119,12 @@
     resultadosPropios.style.display = "block";
     gridPropios.innerHTML = data.propios.length
       ? data.propios.map(item => tarjetaHTML(item, false)).join("")
-      : `<p class="muted grid-message">Nada en tu catálogo todavía.</p>`;
+      : `<p class="muted grid-message">${gettext("buscar.vacio")}</p>`;
 
     resultadosExternos.style.display = "block";
     gridExternos.innerHTML = data.externos.length
       ? data.externos.map(item => tarjetaHTML(item, true)).join("")
-      : `<p class="muted grid-message">No se encontraron resultados en la base pública.</p>`;
+      : `<p class="muted grid-message">${gettext("buscar.sinExternos")}</p>`;
   }
 
   async function agregarACatalogo(item) {
@@ -138,10 +139,10 @@
     const data = await res.json();
 
     if (data.ok) {
-      alert(`"${data.nombre}" agregado a tu catálogo. Ya lo vas a ver al escanear ese código.`);
+      alert(gettext("buscar.agregado").replace("{nombre}", data.nombre));
       buscarPropio();  // refresca la sección de "tu catálogo"
     } else {
-      alert("No se pudo agregar. Intentá de nuevo.");
+      alert(gettext("buscar.errorAgregar"));
     }
   }
 

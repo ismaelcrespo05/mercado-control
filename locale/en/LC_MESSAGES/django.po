@@ -1,0 +1,344 @@
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "nav.inicio"
+msgstr "Home"
+
+msgid "nav.config"
+msgstr "Settings"
+
+msgid "nav.escanear"
+msgstr "+ Scan"
+
+msgid "nav.logout"
+msgstr "Sign out"
+
+msgid "nav.perfil"
+msgstr "My account"
+
+msgid "nav.danios"
+msgstr "Damages"
+
+msgid "nav.galeria"
+msgstr "🖼️ Gallery"
+
+msgid "login.title"
+msgstr "VenceYa"
+
+msgid "login.subtitle"
+msgstr "Expiration control"
+
+msgid "login.username"
+msgstr "Username"
+
+msgid "login.password"
+msgstr "Password"
+
+msgid "login.submit"
+msgstr "Sign in"
+
+msgid "dashboard.title"
+msgstr "Dashboard"
+
+msgid "dashboard.vencidos"
+msgstr "Expired"
+
+msgid "dashboard.alerta"
+msgstr "Soon to expire"
+
+msgid "dashboard.ok"
+msgstr "Good condition"
+
+msgid "dashboard.secVencidos"
+msgstr "🔴 Expired"
+
+msgid "dashboard.secAlerta"
+msgstr "🟡 Soon to expire"
+
+msgid "dashboard.secOk"
+msgstr "🟢 Good condition"
+
+msgid "dashboard.empty"
+msgstr "No products registered yet."
+
+msgid "dashboard.scanFirst"
+msgstr "Scan first product"
+
+msgid "dashboard.filtros"
+msgstr "Filters"
+
+msgid "dashboard.aplicar"
+msgstr "Apply"
+
+msgid "dashboard.limpiar"
+msgstr "Clear filters"
+
+msgid "columns.producto"
+msgstr "Product"
+
+msgid "columns.codigo"
+msgstr "Code"
+
+msgid "columns.vence"
+msgstr "Expires"
+
+msgid "columns.vencio"
+msgstr "Expired"
+
+msgid "columns.dias"
+msgstr "Days remaining"
+
+msgid "columns.diasVenc"
+msgstr "Days expired"
+
+msgid "columns.cant"
+msgstr "Qty."
+
+msgid "columns.acciones"
+msgstr "Actions"
+
+msgid "buttons.venta"
+msgstr "Sale"
+
+msgid "buttons.editar"
+msgstr "Edit"
+
+msgid "buttons.eliminar"
+msgstr "Delete"
+
+msgid "buttons.danio"
+msgstr "Report damage"
+
+msgid "buttons.guardar"
+msgstr "Save"
+
+msgid "buttons.cancelar"
+msgstr "Cancel"
+
+msgid "forms.nombre"
+msgstr "Product name"
+
+msgid "forms.codigo"
+msgstr "Barcode"
+
+msgid "forms.fecha"
+msgstr "Expiration date"
+
+msgid "forms.fechaDesde"
+msgstr "From"
+
+msgid "forms.fechaHasta"
+msgstr "To"
+
+msgid "forms.cantidad"
+msgstr "Quantity"
+
+msgid "forms.tipoDanio"
+msgstr "Damage type"
+
+msgid "forms.motivo"
+msgstr "Reason/Description"
+
+msgid "forms.estado"
+msgstr "Status"
+
+msgid "forms.search"
+msgstr "Search product..."
+
+msgid "placeholders.nombre"
+msgstr "E.g.: Integral Milk 1L"
+
+msgid "placeholders.codigo"
+msgstr "Scan or enter the code"
+
+msgid "placeholders.buscar"
+msgstr "Search by name or code..."
+
+msgid "messages.success"
+msgstr "Operation completed"
+
+msgid "messages.error"
+msgstr "Operation error"
+
+msgid "messages.confirm"
+msgstr "Are you sure?"
+
+msgid "config.title"
+msgstr "Settings"
+
+msgid "config.diasAlerta"
+msgstr "Days warning before expiration"
+
+msgid "config.guardar"
+msgstr "Save settings"
+
+msgid "danio.title"
+msgstr "Damaged Products"
+
+msgid "danio.reportar"
+msgstr "Report damage"
+
+msgid "danio.listar"
+msgstr "View damages"
+
+msgid "danio.rasgado"
+msgstr "Torn"
+
+msgid "danio.roto"
+msgstr "Broken"
+
+msgid "danio.echadoPerder"
+msgstr "Spoiled"
+
+msgid "danio.mojado"
+msgstr "Wet"
+
+msgid "danio.otro"
+msgstr "Other"
+
+msgid "danio.reportado"
+msgstr "Reported"
+
+msgid "danio.revisado"
+msgstr "Reviewed"
+
+msgid "danio.descartado"
+msgstr "Discarded"
+
+msgid "danio.reportadoPor"
+msgstr "Reported by"
+
+msgid "danio.fechaReporte"
+msgstr "Report date"
+
+msgid "escanearPage.title"
+msgstr "Register product"
+
+msgid "escanearPage.cantidadLabel"
+msgstr "Quantity of units with this date"
+
+msgid "filters.desde"
+msgstr "From"
+
+msgid "filters.hasta"
+msgstr "To"
+
+msgid "nav.buscar"
+msgstr "🔍 Search"
+
+msgid "nav.avarias"
+msgstr "🔧 Damages"
+
+msgid "nav.panelAdmin"
+msgstr "Admin panel"
+
+msgid "nav.idioma"
+msgstr "Language"
+
+msgid "nav.temaOscuro"
+msgstr "Dark theme"
+
+msgid "dashboard.subtitle"
+msgstr "Inventory status by expiration date and availability."
+
+msgid "dashboard.scanCode"
+msgstr "Scan code"
+
+msgid "dashboard.revisado"
+msgstr "Reviewed"
+
+msgid "dashboard.pendiente"
+msgstr "Pending"
+
+msgid "buttons.volver"
+msgstr "Back"
+
+msgid "buscar.title"
+msgstr "Search product by name"
+
+msgid "buscar.subtitle"
+msgstr "Find saved products or query a public database when data is missing."
+
+msgid "buscar.placeholder"
+msgstr "E.g.: milk, rice, detergent..."
+
+msgid "buscar.propio"
+msgstr "Search my catalog"
+
+msgid "buscar.externa"
+msgstr "Search public database"
+
+msgid "buscar.ayuda"
+msgstr "The public database search is slower and has a per-minute usage limit — use it when you cannot find the product in your catalog."
+
+msgid "buscar.catalogo"
+msgstr "In your catalog"
+
+msgid "buscar.basePublica"
+msgstr "Public database"
+
+msgid "buscar.agregarAyuda"
+msgstr "Click \"Add to my catalog\" to save it and find it automatically the next time you scan that code."
+
+msgid "buscar.agregar"
+msgstr "Add to my catalog"
+
+msgid "buscar.enCatalogo"
+msgstr "In catalog"
+
+msgid "buscar.estadoPropio"
+msgstr "Searching your catalog..."
+
+msgid "buscar.sinPropios"
+msgstr "Nothing was found in your catalog. Try the public database."
+
+msgid "buscar.minimo"
+msgstr "Enter at least 2 letters to search."
+
+msgid "buscar.estadoExterna"
+msgstr "Searching the public database... this may take a few seconds."
+
+msgid "buscar.vacio"
+msgstr "Nothing in your catalog yet."
+
+msgid "buscar.sinExternos"
+msgstr "No results were found in the public database."
+
+msgid "buscar.agregado"
+msgstr "\"{nombre}\" was added to your catalog. You will see it when scanning that code."
+
+msgid "buscar.errorAgregar"
+msgstr "Could not add the product. Try again."
+
+msgid "config.subtitle"
+msgstr "Choose when to see expiration alerts on the dashboard."
+
+msgid "config.help"
+msgstr "Set how many days in advance you want to receive the expiration alert. Products expiring within that period appear in yellow."
+
+msgid "password.title"
+msgstr "Change my password"
+
+msgid "password.actual"
+msgstr "Current password"
+
+msgid "password.nueva"
+msgstr "New password"
+
+msgid "password.confirmar"
+msgstr "Confirm new password"
+
+msgid "password.actualizar"
+msgstr "Update password"
+
+msgid "galeria.title"
+msgstr "Product gallery"
+
+msgid "galeria.placeholder"
+msgstr "Search product by name..."
+
+msgid "galeria.sinFoto"
+msgstr "No photo yet"

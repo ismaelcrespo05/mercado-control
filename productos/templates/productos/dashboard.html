@@ -6,7 +6,7 @@
 <div class="page-header">
   <div class="page-title-group">
     <h1 data-i18n="dashboard.title">Panel de control</h1>
-    <p class="page-subtitle">Estado del inventario por fecha de vencimiento y disponibilidad.</p>
+    <p class="page-subtitle" data-i18n="dashboard.subtitle">Estado del inventario por fecha de vencimiento y disponibilidad.</p>
   </div>
   <div class="page-actions">
     <a href="{% url 'escanear' %}" class="btn btn-primary" data-i18n="nav.escanear">+ Escanear</a>
@@ -42,7 +42,7 @@
       <label for="filtro_codigo" data-i18n="forms.codigo">Código</label>
       <div style="display:flex; gap:0.5rem; align-items:center;">
         <input type="text" id="filtro_codigo" name="codigo" placeholder="Buscar por código..." value="{{ codigo_filter }}" data-i18n-placeholder="placeholders.buscar" style="flex:1;" />
-        <button type="button" id="btnScanCodigo" class="btn btn-ghost" title="Escanear código" aria-label="Escanear código" data-scan-code="true">📷</button>
+        <button type="button" id="btnScanCodigo" class="btn btn-ghost" title="Escanear código" aria-label="Escanear código" data-i18n-title="dashboard.scanCode" data-i18n-aria-label="dashboard.scanCode" data-scan-code="true">📷</button>
       </div>
     </div>
     <div class="form-group">
@@ -97,9 +97,9 @@
           <td>
             <strong>{{ p.nombre }}</strong>
             {% if p.revisado %}
-            <br><span class="badge badge-ok">Revisado</span>
+            <br><span class="badge badge-ok" data-i18n="dashboard.revisado">Revisado</span>
             {% else %}
-            <br><span class="badge badge-warn">Pendiente</span>
+            <br><span class="badge badge-warn" data-i18n="dashboard.pendiente">Pendiente</span>
             {% endif %}
           </td>
           <td class="code">{{ p.codigo_barra }}</td>
@@ -329,6 +329,17 @@
   </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/quagga@0.12.1/dist/quagga.min.js"></script>
+<style>
+#scanCodigoViewport video,
+#scanCodigoViewport canvas {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+</style>
 <script>
 let pkActual = null;
 let scanCodigoActivo = false;
@@ -349,7 +360,7 @@ function abrirEscanerCodigo() {
     wrapper.style.zIndex = '99999';
     wrapper.innerHTML = `
       <div style="width:min(92vw, 560px); background:var(--surface); border-radius:14px; padding:1rem; box-shadow:0 16px 48px rgba(0,0,0,0.3);">
-        <div id="scanCodigoViewport" style="position:relative; border-radius:10px; overflow:hidden; background:#000; aspect-ratio:4/3; max-height:360px;"></div>
+        <div id="scanCodigoViewport" style="position:relative; border-radius:10px; overflow:hidden; background:#000; aspect-ratio:4/3; max-height:340px;"></div>
         <button type="button" class="btn btn-ghost btn-sm" onclick="cerrarEscanerCodigo()" style="margin-top:0.75rem; width:100%;">✕ Cerrar cámara</button>
       </div>
     `;

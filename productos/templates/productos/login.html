@@ -1,4 +1,4 @@
-{% load static %}
+{% load static i18n %}
 <!DOCTYPE html>
 <html lang="es" data-theme="dark">
 <head>
@@ -6,10 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login — StockCheck</title>
   
-  <!-- i18next CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/i18next@23.5.0/i18next.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/i18next-http-backend@2.4.2/i18nextHttpBackend.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/i18next-browser-languagedetector@7.2.0/i18nextBrowserLanguageDetector.min.js"></script>
   <style>
     /* ===== DARK THEME (default) ===== */
     [data-theme="dark"] {
@@ -247,8 +243,7 @@
 
 <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="Cambiar tema">🌙</button>
 
-<!-- i18next Config -->
-<script src="{% static 'js/i18next-config.js' %}"></script>
+<script src="{% url 'javascript-catalog' %}"></script>
 
 <script>
 let currentTheme = localStorage.getItem('theme') || 'dark';
@@ -264,7 +259,14 @@ function toggleTheme() {
   applyTheme(currentTheme);
 }
 
+function updatePageLanguage() {
+  document.querySelectorAll('[data-i18n]').forEach((el) => {
+    el.textContent = gettext(el.getAttribute('data-i18n'));
+  });
+}
+
 applyTheme(currentTheme);
+updatePageLanguage();
 </script>
 
 </body>

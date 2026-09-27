@@ -1,0 +1,344 @@
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "nav.inicio"
+msgstr "Accueil"
+
+msgid "nav.config"
+msgstr "Paramètres"
+
+msgid "nav.escanear"
+msgstr "+ Scanner"
+
+msgid "nav.logout"
+msgstr "Déconnexion"
+
+msgid "nav.perfil"
+msgstr "Mon compte"
+
+msgid "nav.danios"
+msgstr "Dommages"
+
+msgid "nav.galeria"
+msgstr "🖼️ Galerie"
+
+msgid "login.title"
+msgstr "VenceYa"
+
+msgid "login.subtitle"
+msgstr "Contrôle des dates"
+
+msgid "login.username"
+msgstr "Nom d'utilisateur"
+
+msgid "login.password"
+msgstr "Mot de passe"
+
+msgid "login.submit"
+msgstr "Connexion"
+
+msgid "dashboard.title"
+msgstr "Tableau de bord"
+
+msgid "dashboard.vencidos"
+msgstr "Expirés"
+
+msgid "dashboard.alerta"
+msgstr "À expirer"
+
+msgid "dashboard.ok"
+msgstr "En bon état"
+
+msgid "dashboard.secVencidos"
+msgstr "🔴 Expirés"
+
+msgid "dashboard.secAlerta"
+msgstr "🟡 À expirer bientôt"
+
+msgid "dashboard.secOk"
+msgstr "🟢 En bon état"
+
+msgid "dashboard.empty"
+msgstr "Aucun produit enregistré."
+
+msgid "dashboard.scanFirst"
+msgstr "Scanner le premier produit"
+
+msgid "dashboard.filtros"
+msgstr "Filtres"
+
+msgid "dashboard.aplicar"
+msgstr "Appliquer"
+
+msgid "dashboard.limpiar"
+msgstr "Effacer les filtres"
+
+msgid "columns.producto"
+msgstr "Produit"
+
+msgid "columns.codigo"
+msgstr "Code"
+
+msgid "columns.vence"
+msgstr "Expire"
+
+msgid "columns.vencio"
+msgstr "Expiré"
+
+msgid "columns.dias"
+msgstr "Jours restants"
+
+msgid "columns.diasVenc"
+msgstr "Jours expirés"
+
+msgid "columns.cant"
+msgstr "Qté."
+
+msgid "columns.acciones"
+msgstr "Actions"
+
+msgid "buttons.venta"
+msgstr "Vente"
+
+msgid "buttons.editar"
+msgstr "Modifier"
+
+msgid "buttons.eliminar"
+msgstr "Supprimer"
+
+msgid "buttons.danio"
+msgstr "Signaler dommage"
+
+msgid "buttons.guardar"
+msgstr "Enregistrer"
+
+msgid "buttons.cancelar"
+msgstr "Annuler"
+
+msgid "forms.nombre"
+msgstr "Nom du produit"
+
+msgid "forms.codigo"
+msgstr "Code-barres"
+
+msgid "forms.fecha"
+msgstr "Date d'expiration"
+
+msgid "forms.fechaDesde"
+msgstr "De"
+
+msgid "forms.fechaHasta"
+msgstr "À"
+
+msgid "forms.cantidad"
+msgstr "Quantité"
+
+msgid "forms.tipoDanio"
+msgstr "Type de dommage"
+
+msgid "forms.motivo"
+msgstr "Raison/Description"
+
+msgid "forms.estado"
+msgstr "Statut"
+
+msgid "forms.search"
+msgstr "Chercher produit..."
+
+msgid "placeholders.nombre"
+msgstr "Ex: Lait Intégral 1L"
+
+msgid "placeholders.codigo"
+msgstr "Scannez ou entrez le code"
+
+msgid "placeholders.buscar"
+msgstr "Chercher par nom ou code..."
+
+msgid "messages.success"
+msgstr "Opération réussie"
+
+msgid "messages.error"
+msgstr "Erreur d'opération"
+
+msgid "messages.confirm"
+msgstr "Êtes-vous sûr?"
+
+msgid "config.title"
+msgstr "Paramètres"
+
+msgid "config.diasAlerta"
+msgstr "Jours d'alerte avant expiration"
+
+msgid "config.guardar"
+msgstr "Enregistrer les paramètres"
+
+msgid "danio.title"
+msgstr "Produits Endommagés"
+
+msgid "danio.reportar"
+msgstr "Signaler dommage"
+
+msgid "danio.listar"
+msgstr "Voir dommages"
+
+msgid "danio.rasgado"
+msgstr "Déchiré"
+
+msgid "danio.roto"
+msgstr "Cassé"
+
+msgid "danio.echadoPerder"
+msgstr "Gâté"
+
+msgid "danio.mojado"
+msgstr "Mouillé"
+
+msgid "danio.otro"
+msgstr "Autre"
+
+msgid "danio.reportado"
+msgstr "Signalé"
+
+msgid "danio.revisado"
+msgstr "Examiné"
+
+msgid "danio.descartado"
+msgstr "Rejeté"
+
+msgid "danio.reportadoPor"
+msgstr "Signalé par"
+
+msgid "danio.fechaReporte"
+msgstr "Date du signalement"
+
+msgid "escanearPage.title"
+msgstr "Enregistrer le produit"
+
+msgid "escanearPage.cantidadLabel"
+msgstr "Quantité d'unités avec cette date"
+
+msgid "filters.desde"
+msgstr "Depuis"
+
+msgid "filters.hasta"
+msgstr "Jusqu'à"
+
+msgid "nav.buscar"
+msgstr "🔍 Rechercher"
+
+msgid "nav.avarias"
+msgstr "🔧 Dommages"
+
+msgid "nav.panelAdmin"
+msgstr "Panneau admin"
+
+msgid "nav.idioma"
+msgstr "Langue"
+
+msgid "nav.temaOscuro"
+msgstr "Thème sombre"
+
+msgid "dashboard.subtitle"
+msgstr "État du stock par date d’expiration et disponibilité."
+
+msgid "dashboard.scanCode"
+msgstr "Scanner le code"
+
+msgid "dashboard.revisado"
+msgstr "Révisé"
+
+msgid "dashboard.pendiente"
+msgstr "En attente"
+
+msgid "buttons.volver"
+msgstr "Retour"
+
+msgid "buscar.title"
+msgstr "Rechercher un produit par nom"
+
+msgid "buscar.subtitle"
+msgstr "Trouvez des produits enregistrés ou consultez une base publique si des données manquent."
+
+msgid "buscar.placeholder"
+msgstr "Ex. : lait, riz, détergent..."
+
+msgid "buscar.propio"
+msgstr "Rechercher dans mon catalogue"
+
+msgid "buscar.externa"
+msgstr "Rechercher dans la base publique"
+
+msgid "buscar.ayuda"
+msgstr "La recherche dans la base publique est plus lente et limitée par minute — utilisez-la si le produit est absent de votre catalogue."
+
+msgid "buscar.catalogo"
+msgstr "Dans votre catalogue"
+
+msgid "buscar.basePublica"
+msgstr "Base publique"
+
+msgid "buscar.agregarAyuda"
+msgstr "Cliquez sur « Ajouter à mon catalogue » pour l’enregistrer et le retrouver lors du prochain scan."
+
+msgid "buscar.agregar"
+msgstr "Ajouter à mon catalogue"
+
+msgid "buscar.enCatalogo"
+msgstr "Dans le catalogue"
+
+msgid "buscar.estadoPropio"
+msgstr "Recherche dans votre catalogue..."
+
+msgid "buscar.sinPropios"
+msgstr "Aucun résultat dans votre catalogue. Essayez la base publique."
+
+msgid "buscar.minimo"
+msgstr "Saisissez au moins 2 lettres pour rechercher."
+
+msgid "buscar.estadoExterna"
+msgstr "Recherche dans la base publique... cela peut prendre quelques secondes."
+
+msgid "buscar.vacio"
+msgstr "Votre catalogue est encore vide."
+
+msgid "buscar.sinExternos"
+msgstr "Aucun résultat dans la base publique."
+
+msgid "buscar.agregado"
+msgstr "« {nombre} » a été ajouté à votre catalogue. Vous le verrez lors du scan de ce code."
+
+msgid "buscar.errorAgregar"
+msgstr "Impossible d’ajouter le produit. Réessayez."
+
+msgid "config.subtitle"
+msgstr "Choisissez quand afficher les alertes d’expiration dans le tableau de bord."
+
+msgid "config.help"
+msgstr "Définissez le nombre de jours d’anticipation pour recevoir l’alerte d’expiration."
+
+msgid "password.title"
+msgstr "Modifier mon mot de passe"
+
+msgid "password.actual"
+msgstr "Mot de passe actuel"
+
+msgid "password.nueva"
+msgstr "Nouveau mot de passe"
+
+msgid "password.confirmar"
+msgstr "Confirmer le nouveau mot de passe"
+
+msgid "password.actualizar"
+msgstr "Mettre à jour le mot de passe"
+
+msgid "galeria.title"
+msgstr "Galerie de produits"
+
+msgid "galeria.placeholder"
+msgstr "Rechercher un produit par nom..."
+
+msgid "galeria.sinFoto"
+msgstr "Pas encore de photo"

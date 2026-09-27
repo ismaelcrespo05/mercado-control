@@ -1,0 +1,344 @@
+msgid ""
+msgstr ""
+"Language: pt\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "nav.inicio"
+msgstr "Início"
+
+msgid "nav.config"
+msgstr "Configuração"
+
+msgid "nav.escanear"
+msgstr "+ Escanear"
+
+msgid "nav.logout"
+msgstr "Sair"
+
+msgid "nav.perfil"
+msgstr "Minha conta"
+
+msgid "nav.danios"
+msgstr "Danos/Avaria"
+
+msgid "nav.galeria"
+msgstr "🖼️ Galeria"
+
+msgid "login.title"
+msgstr "VenceYa"
+
+msgid "login.subtitle"
+msgstr "Controle de vencimentos"
+
+msgid "login.username"
+msgstr "Usuário"
+
+msgid "login.password"
+msgstr "Senha"
+
+msgid "login.submit"
+msgstr "Entrar"
+
+msgid "dashboard.title"
+msgstr "Painel de controle"
+
+msgid "dashboard.vencidos"
+msgstr "Vencidos"
+
+msgid "dashboard.alerta"
+msgstr "A vencer"
+
+msgid "dashboard.ok"
+msgstr "Em bom estado"
+
+msgid "dashboard.secVencidos"
+msgstr "🔴 Vencidos"
+
+msgid "dashboard.secAlerta"
+msgstr "🟡 A vencer em breve"
+
+msgid "dashboard.secOk"
+msgstr "🟢 Em bom estado"
+
+msgid "dashboard.empty"
+msgstr "Nenhum produto registrado ainda."
+
+msgid "dashboard.scanFirst"
+msgstr "Escanear primeiro produto"
+
+msgid "dashboard.filtros"
+msgstr "Filtros"
+
+msgid "dashboard.aplicar"
+msgstr "Aplicar"
+
+msgid "dashboard.limpiar"
+msgstr "Limpar filtros"
+
+msgid "columns.produto"
+msgstr "Produto"
+
+msgid "columns.codigo"
+msgstr "Código"
+
+msgid "columns.vence"
+msgstr "Vence"
+
+msgid "columns.vencio"
+msgstr "Venceu"
+
+msgid "columns.dias"
+msgstr "Dias restantes"
+
+msgid "columns.diasVenc"
+msgstr "Dias vencido"
+
+msgid "columns.cant"
+msgstr "Qtd."
+
+msgid "columns.acciones"
+msgstr "Ações"
+
+msgid "buttons.venta"
+msgstr "Venda"
+
+msgid "buttons.editar"
+msgstr "Editar"
+
+msgid "buttons.eliminar"
+msgstr "Excluir"
+
+msgid "buttons.danio"
+msgstr "Reportar dano"
+
+msgid "buttons.guardar"
+msgstr "Salvar"
+
+msgid "buttons.cancelar"
+msgstr "Cancelar"
+
+msgid "forms.nombre"
+msgstr "Nome do produto"
+
+msgid "forms.codigo"
+msgstr "Código de barras"
+
+msgid "forms.fecha"
+msgstr "Data de vencimento"
+
+msgid "forms.fechaDesde"
+msgstr "De"
+
+msgid "forms.fechaHasta"
+msgstr "Até"
+
+msgid "forms.cantidad"
+msgstr "Quantidade"
+
+msgid "forms.tipoDanio"
+msgstr "Tipo de dano"
+
+msgid "forms.motivo"
+msgstr "Motivo/Descrição"
+
+msgid "forms.estado"
+msgstr "Estado"
+
+msgid "forms.search"
+msgstr "Procurar produto..."
+
+msgid "placeholders.nombre"
+msgstr "Ex: Leite Integral 1L"
+
+msgid "placeholders.codigo"
+msgstr "Escaneie ou digite o código"
+
+msgid "placeholders.buscar"
+msgstr "Procurar por nome ou código..."
+
+msgid "messages.success"
+msgstr "Operação concluída"
+
+msgid "messages.error"
+msgstr "Erro na operação"
+
+msgid "messages.confirm"
+msgstr "Tem certeza?"
+
+msgid "config.title"
+msgstr "Configuração"
+
+msgid "config.diasAlerta"
+msgstr "Dias de alerta antes de vencer"
+
+msgid "config.guardar"
+msgstr "Salvar configuração"
+
+msgid "danio.title"
+msgstr "Produtos Danificados"
+
+msgid "danio.reportar"
+msgstr "Reportar dano"
+
+msgid "danio.listar"
+msgstr "Ver danos"
+
+msgid "danio.rasgado"
+msgstr "Rasgado"
+
+msgid "danio.roto"
+msgstr "Quebrado"
+
+msgid "danio.echadoPerder"
+msgstr "Estragado"
+
+msgid "danio.mojado"
+msgstr "Molhado"
+
+msgid "danio.otro"
+msgstr "Outro"
+
+msgid "danio.reportado"
+msgstr "Reportado"
+
+msgid "danio.revisado"
+msgstr "Revisado"
+
+msgid "danio.descartado"
+msgstr "Descartado"
+
+msgid "danio.reportadoPor"
+msgstr "Reportado por"
+
+msgid "danio.fechaReporte"
+msgstr "Data do relato"
+
+msgid "escanearPage.title"
+msgstr "Registrar produto"
+
+msgid "escanearPage.cantidadLabel"
+msgstr "Quantidade de unidades com esta data"
+
+msgid "filters.desde"
+msgstr "De"
+
+msgid "filters.hasta"
+msgstr "Até"
+
+msgid "nav.buscar"
+msgstr "🔍 Procurar"
+
+msgid "nav.avarias"
+msgstr "🔧 Avarias"
+
+msgid "nav.panelAdmin"
+msgstr "Painel admin"
+
+msgid "nav.idioma"
+msgstr "Idioma"
+
+msgid "nav.temaOscuro"
+msgstr "Tema escuro"
+
+msgid "dashboard.subtitle"
+msgstr "Estado do estoque por data de vencimento e disponibilidade."
+
+msgid "dashboard.scanCode"
+msgstr "Escanear código"
+
+msgid "dashboard.revisado"
+msgstr "Revisado"
+
+msgid "dashboard.pendiente"
+msgstr "Pendente"
+
+msgid "buttons.volver"
+msgstr "Voltar"
+
+msgid "buscar.title"
+msgstr "Buscar produto por nome"
+
+msgid "buscar.subtitle"
+msgstr "Encontre produtos salvos ou consulte uma base pública quando faltarem dados."
+
+msgid "buscar.placeholder"
+msgstr "Ex.: leite, arroz, detergente..."
+
+msgid "buscar.propio"
+msgstr "Buscar no meu catálogo"
+
+msgid "buscar.externa"
+msgstr "Buscar na base pública"
+
+msgid "buscar.ayuda"
+msgstr "A busca na base pública é mais lenta e tem limite de usos por minuto — use quando não encontrar o produto no seu catálogo."
+
+msgid "buscar.catalogo"
+msgstr "No seu catálogo"
+
+msgid "buscar.basePublica"
+msgstr "Base pública"
+
+msgid "buscar.agregarAyuda"
+msgstr "Clique em \"Adicionar ao meu catálogo\" para salvá-lo e encontrá-lo na próxima vez que escanear o código."
+
+msgid "buscar.agregar"
+msgstr "Adicionar ao meu catálogo"
+
+msgid "buscar.enCatalogo"
+msgstr "No catálogo"
+
+msgid "buscar.estadoPropio"
+msgstr "Buscando no seu catálogo..."
+
+msgid "buscar.sinPropios"
+msgstr "Nenhum produto encontrado no seu catálogo. Tente a base pública."
+
+msgid "buscar.minimo"
+msgstr "Digite pelo menos 2 letras para buscar."
+
+msgid "buscar.estadoExterna"
+msgstr "Buscando na base pública... pode levar alguns segundos."
+
+msgid "buscar.vacio"
+msgstr "Ainda não há produtos no seu catálogo."
+
+msgid "buscar.sinExternos"
+msgstr "Nenhum resultado encontrado na base pública."
+
+msgid "buscar.agregado"
+msgstr "\"{nombre}\" adicionado ao seu catálogo. Você o verá ao escanear esse código."
+
+msgid "buscar.errorAgregar"
+msgstr "Não foi possível adicionar. Tente novamente."
+
+msgid "config.subtitle"
+msgstr "Ajuste quando deseja ver alertas de vencimento no painel."
+
+msgid "config.help"
+msgstr "Defina com quantos dias de antecedência deseja receber o alerta de vencimento."
+
+msgid "password.title"
+msgstr "Alterar minha senha"
+
+msgid "password.actual"
+msgstr "Senha atual"
+
+msgid "password.nueva"
+msgstr "Nova senha"
+
+msgid "password.confirmar"
+msgstr "Confirmar nova senha"
+
+msgid "password.actualizar"
+msgstr "Atualizar senha"
+
+msgid "galeria.title"
+msgstr "Galeria de produtos"
+
+msgid "galeria.placeholder"
+msgstr "Buscar produto por nome..."
+
+msgid "galeria.sinFoto"
+msgstr "Ainda sem foto"
