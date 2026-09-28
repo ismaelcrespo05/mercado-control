@@ -43,6 +43,7 @@
     document.querySelectorAll('[data-i18n]').forEach((el) => {
       const key = el.getAttribute('data-i18n');
       const text = i18next.t(key);
+      if (text === key) return;
 
       if (el.tagName === 'INPUT' && el.type !== 'hidden') {
         el.placeholder = text;
@@ -56,7 +57,7 @@
     document.querySelectorAll('[data-i18n-placeholder]').forEach((el) => {
       const key = el.getAttribute('data-i18n-placeholder');
       const text = i18next.t(key);
-      if (text) {
+      if (text && text !== key) {
         el.placeholder = text;
       }
     });

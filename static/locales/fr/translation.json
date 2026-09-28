@@ -24,8 +24,13 @@
     "secAlerta": "🟡 À expirer bientôt",
     "secOk": "🟢 En bon état",
     "empty": "Aucun produit enregistré.",
+    "noResults": "Aucun produit ne correspond à ces filtres.",
     "scanFirst": "Scanner le premier produit",
     "filtros": "Filtres",
+    "revision": "État de vérification",
+    "todos": "Tous",
+    "revisados": "Vérifiés",
+    "pendientes": "En attente",
     "aplicar": "Appliquer",
     "limpiar": "Effacer les filtres"
   },

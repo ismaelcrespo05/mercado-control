@@ -169,6 +169,47 @@ class RevisarProductoTests(TestCase):
         self.assertContains(response, "data-revisado=\"1\"")
         self.assertContains(response, "Revisado")
 
+    def test_dashboard_filtra_productos_revisados_y_pendientes(self):
+        Producto.objects.create(
+            codigo_barra="9876543210988",
+            nombre="Frijoles revisados",
+            fecha_vencimiento="2030-01-01",
+            cantidad=1,
+            revisado=True,
+            revisado_por=self.admin,
+        )
+        self.client.force_login(self.admin)
+
+        revisados = self.client.get(reverse("dashboard"), {"revision": "revisados"})
+        self.assertContains(revisados, "Frijoles revisados")
+        self.assertNotContains(revisados, "Arroz premium")
+
+        pendientes = self.client.get(reverse("dashboard"), {"revision": "pendientes"})
+        self.assertContains(pendientes, "Arroz premium")
+        self.assertNotContains(pendientes, "Frijoles revisados")
+
+    def test_dashboard_muestra_estado_sin_resultados_para_pendientes_vacios(self):
+        self.producto.revisado = True
+        self.producto.revisado_por = self.admin
+        self.producto.save()
+        self.client.force_login(self.admin)
+
+        response = self.client.get(reverse("dashboard"), {"revision": "pendientes"})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "No se encontraron productos con esos filtros.")
+        self.assertNotContains(response, "Arroz premium")
+
+    def test_catalogo_javascript_incluye_traducciones_del_filtro(self):
+        response = self.client.get(
+            reverse("javascript-catalog"),
+            HTTP_ACCEPT_LANGUAGE="es",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '"dashboard.revision": "Estado de revisi\\u00f3n"')
+        self.assertContains(response, '"dashboard.pendientes": "Pendientes"')
+
     def test_dashboard_expone_boton_de_escaneo_para_el_filtro_de_codigo(self):
         self.client.force_login(self.admin)
         response = self.client.get(reverse("dashboard"))

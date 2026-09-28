@@ -53,6 +53,14 @@
       <label for="fecha_hasta" data-i18n="filters.hasta">Hasta</label>
       <input type="date" id="fecha_hasta" name="fecha_hasta" value="{{ fecha_hasta }}" />
     </div>
+    <div class="form-group">
+      <label for="filtro_revision" data-i18n="dashboard.revision">Estado de revisión</label>
+      <select id="filtro_revision" name="revision">
+        <option value="" {% if not revision_filter %}selected{% endif %} data-i18n="dashboard.todos">Todos</option>
+        <option value="revisados" {% if revision_filter == 'revisados' %}selected{% endif %} data-i18n="dashboard.revisados">Revisados</option>
+        <option value="pendientes" {% if revision_filter == 'pendientes' %}selected{% endif %} data-i18n="dashboard.pendientes">Pendientes</option>
+      </select>
+    </div>
   </div>
   <div class="form-actions">
     <button type="submit" class="btn btn-primary" data-i18n="dashboard.aplicar">Aplicar</button>
@@ -282,9 +290,14 @@
 
 {% if not vencidos and not en_alerta and not ok %}
 <div class="card empty-state">
+  {% if nombre_filter or codigo_filter or fecha_desde or fecha_hasta or revision_filter %}
+  <p class="muted" data-i18n="dashboard.noResults">No se encontraron productos con esos filtros.</p>
+  <a href="{% url 'dashboard' %}" class="btn btn-ghost" data-i18n="dashboard.limpiar">Limpiar filtros</a>
+  {% else %}
   <div class="empty-state-icon">□</div>
   <p class="muted" data-i18n="dashboard.empty">No hay productos registrados aún.</p>
   <a href="{% url 'escanear' %}" class="btn btn-primary" data-i18n="dashboard.scanFirst">Escanear primer producto</a>
+  {% endif %}
 </div>
 {% endif %}
 <div class="modal-overlay" id="modalOverlay" onclick="cerrarModalSiOverlay(event)">

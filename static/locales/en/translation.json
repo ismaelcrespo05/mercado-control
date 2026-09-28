@@ -24,8 +24,13 @@
     "secAlerta": "🟡 Soon to expire",
     "secOk": "🟢 Good condition",
     "empty": "No products registered yet.",
+    "noResults": "No products match these filters.",
     "scanFirst": "Scan first product",
     "filtros": "Filters",
+    "revision": "Review status",
+    "todos": "All",
+    "revisados": "Reviewed",
+    "pendientes": "Pending",
     "aplicar": "Apply",
     "limpiar": "Clear filters"
   },

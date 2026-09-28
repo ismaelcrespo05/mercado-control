@@ -70,6 +70,21 @@ msgstr "Scanner le premier produit"
 msgid "dashboard.filtros"
 msgstr "Filtres"
 
+msgid "dashboard.revision"
+msgstr "État de vérification"
+
+msgid "dashboard.todos"
+msgstr "Tous"
+
+msgid "dashboard.revisados"
+msgstr "Vérifiés"
+
+msgid "dashboard.pendientes"
+msgstr "En attente"
+
+msgid "dashboard.noResults"
+msgstr "Aucun produit ne correspond à ces filtres."
+
 msgid "dashboard.aplicar"
 msgstr "Appliquer"
 

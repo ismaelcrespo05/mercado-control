@@ -70,6 +70,21 @@ msgstr "Scan first product"
 msgid "dashboard.filtros"
 msgstr "Filters"
 
+msgid "dashboard.revision"
+msgstr "Review status"
+
+msgid "dashboard.todos"
+msgstr "All"
+
+msgid "dashboard.revisados"
+msgstr "Reviewed"
+
+msgid "dashboard.pendientes"
+msgstr "Pending"
+
+msgid "dashboard.noResults"
+msgstr "No products match these filters."
+
 msgid "dashboard.aplicar"
 msgstr "Apply"
 

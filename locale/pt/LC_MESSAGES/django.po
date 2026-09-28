@@ -70,6 +70,21 @@ msgstr "Escanear primeiro produto"
 msgid "dashboard.filtros"
 msgstr "Filtros"
 
+msgid "dashboard.revision"
+msgstr "Estado da revisão"
+
+msgid "dashboard.todos"
+msgstr "Todos"
+
+msgid "dashboard.revisados"
+msgstr "Revisados"
+
+msgid "dashboard.pendientes"
+msgstr "Pendentes"
+
+msgid "dashboard.noResults"
+msgstr "Nenhum produto corresponde a estes filtros."
+
 msgid "dashboard.aplicar"
 msgstr "Aplicar"
 

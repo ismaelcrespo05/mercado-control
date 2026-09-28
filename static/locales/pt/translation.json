@@ -24,8 +24,13 @@
     "secAlerta": "🟡 A vencer em breve",
     "secOk": "🟢 Em bom estado",
     "empty": "Nenhum produto registrado ainda.",
+    "noResults": "Nenhum produto corresponde a estes filtros.",
     "scanFirst": "Escanear primeiro produto",
     "filtros": "Filtros",
+    "revision": "Status da revisão",
+    "todos": "Todos",
+    "revisados": "Revisados",
+    "pendientes": "Pendentes",
     "aplicar": "Aplicar",
     "limpiar": "Limpar filtros"
   },

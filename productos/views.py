@@ -334,6 +334,7 @@ def dashboard(request):
     codigo_filter = request.GET.get('codigo', '').strip()
     fecha_desde = request.GET.get('fecha_desde', '').strip()
     fecha_hasta = request.GET.get('fecha_hasta', '').strip()
+    revision_filter = request.GET.get('revision', '').strip()
     
     if nombre_filter:
         productos = productos.filter(nombre__icontains=nombre_filter)
@@ -343,6 +344,10 @@ def dashboard(request):
         productos = productos.filter(fecha_vencimiento__gte=fecha_desde)
     if fecha_hasta:
         productos = productos.filter(fecha_vencimiento__lte=fecha_hasta)
+    if revision_filter == 'revisados':
+        productos = productos.filter(revisado=True)
+    elif revision_filter == 'pendientes':
+        productos = productos.filter(revisado=False)
 
     vencidos = [p for p in productos if p.dias_para_vencer < 0]
     en_alerta = [p for p in productos if 0 <= p.dias_para_vencer <= config.dias_alerta]
@@ -358,6 +363,7 @@ def dashboard(request):
         "codigo_filter": codigo_filter,
         "fecha_desde": fecha_desde,
         "fecha_hasta": fecha_hasta,
+        "revision_filter": revision_filter,
         "can_edit": puede_editar(request.user),
         "can_review": puede_gestionar_usuarios(request.user),
     })
