@@ -70,6 +70,27 @@ class ConsultarCodigoTests(TestCase):
         self.assertEqual(response.json()["nombre"], "Leche Entera")
 
 
+class EscanearProductoTests(TestCase):
+    def test_registro_guarda_la_simbologia_detectada(self):
+        user = User.objects.create_user(username="scanner", password="12345678")
+        self.client.force_login(user)
+
+        response = self.client.post(
+            reverse("escanear"),
+            {
+                "codigo_barra": "7501234567893",
+                "codigo_tipo": "ean_13",
+                "nombre": "Producto de prueba",
+                "fecha_vencimiento": "2030-12-31",
+                "cantidad": "1",
+            },
+        )
+
+        self.assertEqual(response.status_code, 302)
+        producto = Producto.objects.get(codigo_barra="7501234567893")
+        self.assertEqual(producto.codigo_tipo, "ean_13")
+
+
 class EditarAvariaTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(username="reportador", password="12345678")

@@ -7,6 +7,7 @@
 <div class="card" style="max-width: 560px;">
   <form method="post" id="scan-form">
     {% csrf_token %}
+    <input type="hidden" id="codigo_tipo" name="codigo_tipo" value="">
 
     <div class="form-group">
       <label for="codigo_barra" data-i18n="forms.codigo">Código de barra</label>
@@ -115,6 +116,7 @@
 
 <script>
   const codigoInput        = document.getElementById("codigo_barra");
+    const codigoTipoInput    = document.getElementById("codigo_tipo");
   const btnBuscar          = document.getElementById("btnBuscar");
   const nombreInput        = document.getElementById("nombre");
   const errorMsg           = document.getElementById("codigo-error");
@@ -186,6 +188,7 @@
   }
 
   codigoInput.addEventListener("input", () => {
+    codigoTipoInput.value = "";
     const valor = codigoInput.value;
     if (!/^[0-9]*$/.test(valor)) {
       codigoInput.value = valor.replace(/[^0-9]/g, "");
@@ -270,15 +273,18 @@
     // así se filtran los errores de un solo frame mal leído.
     Quagga.onDetected(function(result) {
       const codigo = result.codeResult.code;
+      const tipoCodigo = result.codeResult.format || "";
       if (!/^[0-9]+$/.test(codigo)) return;
 
-      lecturas[codigo] = (lecturas[codigo] || 0) + 1;
-      scanStatus.textContent = `Leyendo... (${lecturas[codigo]}/2)`;
+      const lectura = `${tipoCodigo}:${codigo}`;
+      lecturas[lectura] = (lecturas[lectura] || 0) + 1;
+      scanStatus.textContent = `Leyendo... (${lecturas[lectura]}/2)`;
 
-      if (lecturas[codigo] >= 2) {
+      if (lecturas[lectura] >= 2) {
         scanStatus.textContent = "¡Código detectado!";
         codigoInput.value = codigo;
         codigoInput.dispatchEvent(new Event("input"));
+        codigoTipoInput.value = tipoCodigo;
         cerrarCamara();
       }
     });

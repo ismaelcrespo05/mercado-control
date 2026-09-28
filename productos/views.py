@@ -389,9 +389,14 @@ def marcar_revisado(request, pk):
 def escanear(request):
     if request.method == "POST":
         codigo    = request.POST.get("codigo_barra", "").strip()
+        codigo_tipo = request.POST.get("codigo_tipo", "").strip()
         nombre    = request.POST.get("nombre", "").strip()
         fecha_str = request.POST.get("fecha_vencimiento", "").strip()
         foto_manual = request.FILES.get("foto_manual")
+
+        tipos_codigo_validos = {"ean_13", "ean_8", "upc_a", "upc_e", "code_128", "code_39"}
+        if codigo_tipo not in tipos_codigo_validos:
+            codigo_tipo = {13: "ean_13", 12: "upc_a", 8: "ean_8"}.get(len(codigo), "")
 
         if not codigo.isdigit():
             messages.error(request, "El código de barra solo puede contener números.")
@@ -433,11 +438,14 @@ def escanear(request):
 
             if existente:
                 existente.cantidad += cantidad
+                if not existente.codigo_tipo and codigo_tipo:
+                    existente.codigo_tipo = codigo_tipo
                 existente.save()
                 messages.success(request, f"Stock actualizado: {existente.nombre} ahora tiene {existente.cantidad} unidades.")
             else:
                 Producto.objects.create(
                     codigo_barra=codigo,
+                    codigo_tipo=codigo_tipo,
                     nombre=nombre,
                     fecha_vencimiento=fecha,
                     cantidad=cantidad,
@@ -522,6 +530,8 @@ def editar_producto(request, pk):
                 messages.error(request, "Formato de fecha inválido.")
                 return render(request, "productos/editar_producto.html", {"producto": producto})
             
+            if codigo != producto.codigo_barra:
+                producto.codigo_tipo = ""
             producto.codigo_barra = codigo
             producto.nombre = nombre
             producto.fecha_vencimiento = fecha

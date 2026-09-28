@@ -93,6 +93,7 @@
         <tr class="producto-row" onclick="abrirModal(this)"
             data-nombre="{{ p.nombre }}"
             data-codigo="{{ p.codigo_barra }}"
+            data-codigo-tipo="{{ p.codigo_tipo }}"
             data-fecha="{{ p.fecha_vencimiento }}"
             data-dias="{{ p.dias_para_vencer }}"
             data-cantidad="{{ p.cantidad }}"
@@ -166,6 +167,7 @@
         <tr class="producto-row" onclick="abrirModal(this)"
             data-nombre="{{ p.nombre }}"
             data-codigo="{{ p.codigo_barra }}"
+            data-codigo-tipo="{{ p.codigo_tipo }}"
             data-fecha="{{ p.fecha_vencimiento }}"
             data-dias="{{ p.dias_para_vencer }}"
             data-cantidad="{{ p.cantidad }}"
@@ -239,6 +241,7 @@
         <tr class="producto-row" onclick="abrirModal(this)"
             data-nombre="{{ p.nombre }}"
             data-codigo="{{ p.codigo_barra }}"
+            data-codigo-tipo="{{ p.codigo_tipo }}"
             data-fecha="{{ p.fecha_vencimiento }}"
             data-dias="{{ p.dias_para_vencer }}"
             data-cantidad="{{ p.cantidad }}"
@@ -312,7 +315,10 @@
 
     <div class="modal-body">
       <p class="modal-nombre" id="modalNombre"></p>
-      <p class="modal-codigo" id="modalCodigo"></p>
+      <div style="margin:0.75rem 0; padding:0.75rem; background:#fff; border-radius:6px; text-align:center; overflow-x:auto;">
+        <canvas id="modalBarcode" style="display:block; width:auto; max-width:100%; height:auto; margin:0 auto;"></canvas>
+        <p class="modal-codigo" id="modalCodigo" style="color:#111; margin:0.25rem 0 0;"></p>
+      </div>
 
       <div class="modal-grid">
         <div class="modal-field">
@@ -342,6 +348,7 @@
   </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/quagga@0.12.1/dist/quagga.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bwip-js@4.5.1/dist/bwip-js-min.js"></script>
 <style>
 #scanCodigoViewport video,
 #scanCodigoViewport canvas {
@@ -449,6 +456,7 @@ function abrirModal(fila) {
   // Nombre y código
   document.getElementById("modalNombre").textContent   = d.nombre;
   document.getElementById("modalCodigo").textContent   = d.codigo;
+  dibujarCodigoBarras(d.codigo, d.codigoTipo);
   document.getElementById("modalFecha").textContent    = d.fecha;
 
   // Días con color según estado
@@ -509,6 +517,40 @@ function abrirModal(fila) {
   // Abrir el overlay
   document.getElementById("modalOverlay").classList.add("active");
   document.body.style.overflow = "hidden"; // evita scroll detrás del modal
+}
+
+function dibujarCodigoBarras(codigo, tipo) {
+  const canvas = document.getElementById("modalBarcode");
+  const formatos = {
+    ean_13: "ean13",
+    ean_8: "ean8",
+    upc_a: "upca",
+    upc_e: "upce",
+    code_128: "code128",
+    code_39: "code39"
+  };
+  const formato = formatos[tipo] || ({ 13: "ean13", 12: "upca", 8: "ean8" }[codigo.length]) || "code128";
+  const opciones = {
+    bcid: formato,
+    text: codigo,
+    scale: 3,
+    height: 14,
+    includetext: false,
+    backgroundcolor: "FFFFFF",
+    barcolor: "000000"
+  };
+
+  try {
+    bwipjs.toCanvas(canvas, opciones);
+  } catch (error) {
+    if (formato === "code128") return;
+    try {
+      bwipjs.toCanvas(canvas, { ...opciones, bcid: "code128" });
+    } catch (fallbackError) {
+      canvas.width = 0;
+      canvas.height = 0;
+    }
+  }
 }
 
 async function cargarFotoDesdeServidor(codigo) {

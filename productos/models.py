@@ -63,6 +63,7 @@ class CatalogoProducto(models.Model):
 
 class Producto(models.Model):
     codigo_barra = models.CharField(max_length=100, verbose_name="Código de barra")
+    codigo_tipo = models.CharField(max_length=20, blank=True, default="", verbose_name="Formato del código de barras")
     nombre = models.CharField(max_length=200, verbose_name="Nombre del producto")
     fecha_vencimiento = models.DateField(verbose_name="Fecha de vencimiento")
     cantidad = models.PositiveIntegerField(default=1, verbose_name="Cantidad en stock")
